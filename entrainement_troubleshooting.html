@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice — Hardware & Network Troubleshooting</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg: #12161d;
+    --panel: #1b212b;
+    --panel-2: #212836;
+    --line: #2b3342;
+    --text: #eee9df;
+    --text-dim: #9aa3b2;
+    --amber: #e8a33d;
+    --amber-dim: #7a5b26;
+    --blue: #5f9bd6;
+    --blue-dim: #2b4a6b;
+    --green: #5fbf7a;
+    --green-dim: rgba(95,191,122,0.14);
+    --red: #e0685c;
+    --red-dim: rgba(224,104,92,0.14);
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(95,155,214,0.07), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(95,191,122,0.05), transparent 40%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px 16px 60px;
+  }
+
+  .wrap{ width:100%; max-width:560px; }
+
+  header{ margin-bottom:22px; }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px; border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 8px var(--amber);
+  }
+  h1{
+    font-size:22px;
+    margin:8px 0 4px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .sub{ color:var(--text-dim); font-size:14px; }
+
+  /* Deck switch (Methodology vs Practice Questions) */
+  .decks{
+    display:flex;
+    gap:6px;
+    margin:20px 0 12px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:4px;
+  }
+  .deck{
+    flex:1;
+    text-align:center;
+    padding:11px 6px;
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    border-radius:9px;
+    cursor:pointer;
+    user-select:none;
+    transition:background .15s ease, color .15s ease;
+  }
+  .deck.active{ background:var(--panel-2); color:var(--amber); }
+
+  /* Category filter */
+  .cats{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin:0 0 10px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:5px;
+  }
+  .cat{
+    flex:1 1 30%;
+    text-align:center;
+    padding:9px 4px;
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.02em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    border-radius:9px;
+    cursor:pointer;
+    user-select:none;
+    transition:background .15s ease, color .15s ease;
+  }
+  .cat.active{ background:var(--panel-2); color:var(--blue); }
+
+  /* Mode tabs (methodology deck only) */
+  .tabs{
+    display:flex;
+    gap:6px;
+    margin:0 0 18px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:4px;
+  }
+  .tab{
+    flex:1;
+    text-align:center;
+    padding:10px 6px;
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    border-radius:9px;
+    cursor:pointer;
+    user-select:none;
+    transition:background .15s ease, color .15s ease;
+  }
+  .tab.active{ background:var(--panel-2); color:var(--amber); }
+
+  .stats{
+    display:flex;
+    gap:10px;
+    margin:0 0 18px;
+    font-family:var(--mono);
+    font-size:13px;
+  }
+  .stat{
+    flex:1;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 12px;
+  }
+  .stat .n{ font-size:18px; font-weight:600; display:block; }
+  .stat.correct .n{ color:var(--green); }
+  .stat.incorrect .n{ color:var(--red); }
+  .stat.left .n{ color:var(--text); }
+  .stat span:not(.n){ color:var(--text-dim); font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+
+  .progress{
+    height:4px;
+    border-radius:4px;
+    background:var(--line);
+    overflow:hidden;
+    margin-bottom:22px;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--blue-dim), var(--blue));
+    width:0%;
+    transition:width .3s ease;
+  }
+
+  /* Flashcard mode (methodology only) */
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:36px 24px;
+    text-align:center;
+    position:relative;
+    min-height:220px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:border-color .2s ease;
+  }
+  .card:hover{ border-color: var(--blue-dim); }
+  .card .tag{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--blue);
+    margin-bottom:8px;
+  }
+  .card .label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    margin-bottom:14px;
+  }
+  .card .protocol{
+    font-size:21px;
+    font-weight:700;
+    font-family:var(--sans);
+    letter-spacing:-0.01em;
+    line-height:1.3;
+  }
+  .card .answer{
+    font-family:var(--mono);
+    font-size:16px;
+    font-weight:600;
+    color:var(--amber);
+    margin-top:10px;
+    display:none;
+    line-height:1.45;
+  }
+  .card .hint{
+    margin-top:18px;
+    font-size:12px;
+    color:var(--text-dim);
+    font-family:var(--mono);
+  }
+  .card.revealed .protocol{ font-size:16px; color:var(--text-dim); font-weight:500; }
+  .card.revealed .answer{ display:block; }
+  .card.revealed .hint{ display:none; }
+
+  .actions{ display:flex; gap:10px; margin-top:18px; }
+  .actions button{
+    flex:1;
+    padding:14px 10px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--text);
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    transition:transform .08s ease, border-color .15s ease, background .15s ease;
+  }
+  .actions button:active{ transform:scale(0.97); }
+  .actions .no{ border-color: rgba(224,104,92,0.35); }
+  .actions .no:hover{ background:rgba(224,104,92,0.12); border-color:var(--red); }
+  .actions .yes{ border-color: rgba(95,191,122,0.35); }
+  .actions .yes:hover{ background:rgba(95,191,122,0.12); border-color:var(--green); }
+
+  .reveal-btn{
+    margin-top:18px;
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid var(--amber-dim);
+    background:transparent;
+    color:var(--amber);
+    font-family:var(--mono);
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    cursor:pointer;
+  }
+  .reveal-btn:hover{ background:rgba(232,163,61,0.08); }
+
+  /* Shared MCQ card look (used for methodology MCQ + practice questions) */
+  .qcm-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:26px 22px;
+  }
+  .qcm-card .tag{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--blue);
+    margin-bottom:8px;
+  }
+  .qcm-card .label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    margin-bottom:10px;
+  }
+  .qcm-card .question{
+    font-size:15.5px;
+    font-weight:600;
+    letter-spacing:-0.005em;
+    margin-bottom:20px;
+    line-height:1.5;
+  }
+  .qcm-card .question.short{ font-size:17px; font-weight:700; }
+  .qcm-card .question .hl{ color:var(--amber); font-family:var(--mono); font-size:14.5px; }
+  .qcm-card .prompt{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+    margin-bottom:6px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+  }
+  .qcm-options{ display:flex; flex-direction:column; gap:10px; }
+  .qcm-option{
+    text-align:left;
+    padding:14px 16px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+    line-height:1.35;
+  }
+  .qcm-option:hover{ border-color:var(--blue-dim); }
+  .qcm-option.correct{ border-color:var(--green); background:var(--green-dim); color:var(--green); }
+  .qcm-option.wrong{ border-color:var(--red); background:var(--red-dim); color:var(--red); }
+  .qcm-option.disabled{ pointer-events:none; opacity:.55; }
+  .qcm-option.disabled.correct, .qcm-option.disabled.wrong{ opacity:1; }
+
+  .explain{
+    margin-top:16px;
+    padding:12px 14px;
+    border-radius:10px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    font-size:13px;
+    line-height:1.5;
+    color:var(--text-dim);
+    display:none;
+  }
+  .explain.show{ display:block; }
+  .explain b{ color:var(--text); }
+
+  .next-btn{
+    margin-top:16px;
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid var(--amber-dim);
+    background:transparent;
+    color:var(--amber);
+    font-family:var(--mono);
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    cursor:pointer;
+  }
+  .next-btn:hover{ background:rgba(232,163,61,0.08); }
+
+  /* Matching mode (methodology only) */
+  .match-wrap{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:22px;
+  }
+  .match-title{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    margin-bottom:14px;
+  }
+  .match-cols{ display:flex; gap:12px; }
+  .match-col{ flex:1; display:flex; flex-direction:column; gap:8px; }
+  .match-item{
+    padding:12px 10px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--text);
+    font-size:12px;
+    line-height:1.3;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease, opacity .2s ease;
+    min-height:44px;
+    display:flex;
+    align-items:center;
+  }
+  .match-item.name{ font-family:var(--mono); font-weight:600; font-size:12.5px; }
+  .match-item:hover{ border-color:var(--blue-dim); }
+  .match-item.selected{ border-color:var(--blue); background:rgba(95,155,214,0.1); }
+  .match-item.matched{ border-color:var(--green); background:var(--green-dim); color:var(--green); opacity:.6; pointer-events:none; }
+  .match-item.wrong-flash{ border-color:var(--red); background:var(--red-dim); }
+
+  .match-done{ text-align:center; padding:20px 0 4px; }
+  .match-done .msg{ font-family:var(--mono); color:var(--green); margin-bottom:12px; }
+
+  .reset{ margin-top:26px; text-align:center; }
+  .reset button{
+    background:none;
+    border:none;
+    color:var(--text-dim);
+    font-family:var(--mono);
+    font-size:12px;
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:3px;
+  }
+  .reset button:hover{ color:var(--text); }
+
+  .hidden{ display:none; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">CompTIA A+ · 220-1101 · Domain 5.0 (29% of the exam)</div>
+    <h1>Hardware & Network Troubleshooting</h1>
+    <div class="sub" id="subText">Troubleshooting methodology — the 6 steps, drilled as flashcards.</div>
+  </header>
+
+  <div class="decks">
+    <div class="deck active" data-deck="methodology">5.1 Methodology</div>
+    <div class="deck" data-deck="practice">Practice Questions (5.2/5.3/5.5/5.7)</div>
+  </div>
+
+  <!-- Category filter, shown only in Practice Questions deck -->
+  <div class="cats hidden" id="catsBar">
+    <div class="cat active" data-cat="all">All</div>
+    <div class="cat" data-cat="mobo-power">5.2 Mobo/RAM/CPU/Power</div>
+    <div class="cat" data-cat="storage-raid">5.3 Storage/RAID</div>
+    <div class="cat" data-cat="mobile">5.5 Mobile Devices</div>
+    <div class="cat" data-cat="networks">5.7 Networks</div>
+  </div>
+
+  <!-- Mode tabs, shown only in Methodology deck -->
+  <div class="tabs" id="tabsBar">
+    <div class="tab active" data-mode="flash">Flashcards</div>
+    <div class="tab" data-mode="qcm">MCQ</div>
+    <div class="tab" data-mode="match">Matching</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat correct"><span class="n" id="statCorrect">0</span><span>Correct</span></div>
+    <div class="stat incorrect"><span class="n" id="statIncorrect">0</span><span>Missed</span></div>
+    <div class="stat left"><span class="n" id="statLeft">0</span><span>Left</span></div>
+  </div>
+
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div id="flashArea"></div>
+  <div id="qcmArea" class="hidden"></div>
+  <div id="matchArea" class="hidden"></div>
+  <div id="practiceArea" class="hidden"></div>
+
+  <div class="reset">
+    <button id="resetBtn">Reset score</button>
+  </div>
+</div>
+
+<script>
+  /* ============ METHODOLOGY DATA (flashcards / MCQ / matching) ============ */
+  const METHOD_DATA = [
+    { cat:"methodology", p:"1. Identify the problem", a:"Gather information, question users, identify symptoms", f:"First step: understand what's happening before touching anything" },
+    { cat:"methodology", p:"2. Establish a theory of probable cause", a:"Question the obvious first", f:"Form a hypothesis about the cause; research further if needed" },
+    { cat:"methodology", p:"3. Test the theory to determine cause", a:"Confirm or reject the theory", f:"If confirmed, move to the next step; if not, form a new theory or escalate" },
+    { cat:"methodology", p:"4. Establish a plan of action", a:"Plan the fix and consider its impact", f:"Refer to vendor documentation; weigh the impact before implementing" },
+    { cat:"methodology", p:"5. Verify full system functionality", a:"Confirm the fix actually worked", f:"Implement preventive measures if applicable" },
+    { cat:"methodology", p:"6. Document findings, actions, and outcomes", a:"Record what happened", f:"Final step: write up the problem, the fix, and the result for future reference" }
+  ];
+
+  /* ============ PRACTICE QUESTIONS (exam-style scenarios) ============ */
+  // cat = "mobo-power" (5.2), "storage-raid" (5.3), "mobile" (5.5), "networks" (5.7)
+  // options[correct] is the right answer; explain gives a short reason.
+  const PRACTICE = [
+    // --- 5.2 Motherboard, RAM, CPU, and power ---
+    {
+      cat: "mobo-power",
+      scenario: "A field technician is troubleshooting a desktop workstation that powers on, but the display remains completely blank and no OS splash screen appears. The computer emits a series of three long beeps during startup and fails to complete the boot process. What is the MOST likely cause of this issue?",
+      options: [
+        "The GPU driver has become corrupted.",
+        "The memory module is unseated or failing.",
+        "The CMOS battery has lost its charge.",
+        "The monitor cable is disconnected from the motherboard."
+      ],
+      correct: 1,
+      explain: "Beep codes during POST (Power-On Self-Test) indicate hardware failures prior to video initialization. A sequence of three long beeps on most modern BIOS/UEFI systems specifically flags a memory (RAM) detection or failure issue."
+    },
+    {
+      cat: "mobo-power",
+      scenario: "A user reports that their Windows 11 workstation randomly crashes with a blue error screen displaying 'IRQL_NOT_LESS_OR_EQUAL' during heavy multitasking. The system immediately reboots before the user can write down the full error code. Which action should the technician perform FIRST?",
+      options: [
+        "Replace the primary motherboard and update BIOS.",
+        "Disable automatic restart on system failure in Advanced System Settings.",
+        "Perform a clean installation of the operating system.",
+        "Reseat the CPU and reapply thermal paste."
+      ],
+      correct: 1,
+      explain: "To properly diagnose a STOP error (BSOD), the technician must prevent Windows from instantly restarting so they can review the dump file and full error parameters. Disabling automatic restart allows the error screen to persist."
+    },
+    {
+      cat: "mobo-power",
+      scenario: "An administrator attempts to power on a critical server, but there are no spinning fans, no status LEDs on the motherboard, and no audible sounds coming from the chassis. The power outlet has already been confirmed functional with a multimeter. Which component should be tested NEXT?",
+      options: [
+        "Front panel power switch connector",
+        "Power Supply Unit (PSU)",
+        "CMOS retention battery",
+        "CPU voltage regulator module"
+      ],
+      correct: 1,
+      explain: "A complete lack of system activity (no fans, no LEDs, no POST) after confirming wall power strongly indicates a total power delivery failure, making the PSU (or testing it with a PSU tester) the primary suspect."
+    },
+    {
+      cat: "mobo-power",
+      scenario: "A graphic designer complains that a high-end rendering PC unexpectedly shuts down after 15 minutes of video exporting. When the PC powers off, it cannot be turned back on for several minutes. The technician notices significant dust accumulation around the chassis exhaust vents. What should the technician do NEXT?",
+      options: [
+        "Replace the graphics card with a higher wattage model.",
+        "Clean internal cooling components and inspect the thermal solution.",
+        "Clear the motherboard CMOS jumpers to reset thermal thresholds.",
+        "Reinstall the operating system onto an NVMe SSD."
+      ],
+      correct: 1,
+      explain: "Thermal throttling followed by thermal shutdown occurs when components exceed safety limits under load. Clogged vents and heat sinks cause thermal buildup, requiring a thorough physical cleaning and thermal paste/cooler inspection."
+    },
+    {
+      cat: "mobo-power",
+      scenario: "While inspecting a customer's custom PC that frequently reboots under light operation, a technician notices several cylindrical components near the CPU socket with raised, rounded tops and small traces of dried brown residue. Which repair is REQUIRED to permanently resolve this issue?",
+      options: [
+        "Replace the motherboard.",
+        "Re-seat the CPU heatsink.",
+        "Upgrade the system RAM.",
+        "Calibrate the voltage settings in UEFI."
+      ],
+      correct: 0,
+      explain: "Bulging tops and leaking residue are clear physical signs of distended (swollen) capacitors. Since individual capacitor replacement is not a standard field repair, replacing the motherboard is the proper resolution."
+    },
+    {
+      cat: "mobo-power",
+      scenario: "A user is attempting to boot a desktop PC after moving it to a new office desk. The display turns on and shows the motherboards manufacturer logo, but immediately halts with a 'CMOS Checksum Error - Defaults Loaded' prompt. Additionally, the system time has reset to January 1, 2012. What component MUST be replaced?",
+      options: [
+        "The primary BIOS/UEFI chip",
+        "The CR2032 lithium coin cell battery",
+        "The main power supply unit (PSU)",
+        "The primary boot drive (SSD)"
+      ],
+      correct: 1,
+      explain: "A CMOS checksum error combined with the system clock resetting to an epoch date indicates that the non-volatile CMOS memory lost continuous power. Replacing the motherboard's CR2032 coin cell battery resolves this."
+    },
+    {
+      cat: "mobo-power",
+      scenario: "A technician is diagnosing an office PC that randomly freezes without generating a BSOD or crash log. Upon opening the case, the technician notices a strong smell of burnt electrical insulation around the rear exhaust fan. What is the immediate NEXT step the technician should perform?",
+      options: [
+        "Run a memory diagnostic tool on the RAM.",
+        "Disconnect the main power cord and inspect for burnt circuitry.",
+        "Update the motherboard UEFI/BIOS to the latest release.",
+        "Apply fresh thermal paste to the CPU heat spreader."
+      ],
+      correct: 1,
+      explain: "A burning electrical smell poses an immediate physical hazard and indicates severe component overheating or short-circuiting. The technician must disconnect power immediately to prevent hardware fires before inspecting components."
+    },
+    {
+      cat: "mobo-power",
+      scenario: "A user reports that everyday tasks, such as launching File Explorer or opening Web browsers, have become noticeably slower over the past week. Disk usage, CPU temperatures, and network connectivity are verified normal. Which resource should the technician inspect NEXT in Task Manager?",
+      options: [
+        "GPU Hardware Acceleration utilization",
+        "RAM utilization and available physical memory",
+        "Power Management Throttling policies",
+        "PCIe bus bandwidth congestion"
+      ],
+      correct: 1,
+      explain: "Sluggish overall OS responsiveness without elevated CPU or thermal issues is commonly caused by low available physical RAM, forcing Windows to rely heavily on virtual memory (paging file on disk)."
+    },
+    {
+      cat: "mobo-power",
+      scenario: "A technician powers on a custom-built workstation. System fans turn on, power LEDs illuminate, and drive activity is present, but the monitor reports 'No Signal'. The cable and monitor are tested working on another PC. Which diagnostic step should be performed NEXT?",
+      options: [
+        "Reseat the system RAM and discrete GPU.",
+        "Replace the AC wall outlet power cord.",
+        "Replace the motherboard CMOS battery.",
+        "Perform a clean OS reinstallation."
+      ],
+      correct: 0,
+      explain: "A 'Black Screen / No Signal' state where power delivery is confirmed functional usually points to a display output or POST initialization failure caused by loose expansion cards (GPU) or unseated RAM sticks."
+    },
+    {
+      cat: "mobo-power",
+      scenario: "A desktop computer shuts down abruptly during heavy database indexing. The user can turn the system back on immediately, but it shuts off again within 2 minutes. The technician verifies fan operation. Which component is MOST likely failing under load?",
+      options: [
+        "Power Supply Unit (PSU) thermal overload protection",
+        "CPU L3 cache memory integrity",
+        "Front panel power button connection",
+        "System BIOS EEPROM chip"
+      ],
+      correct: 0,
+      explain: "Abrupt shutdowns under heavy computational loads where fans are working often point to a failing PSU that cannot deliver required wattage or is triggering its internal thermal/over-current protection switch."
+    },
+    {
+      cat: "mobo-power",
+      scenario: "An administrator receives multiple complaints that an employee's line-of-business application closes instantly without displaying any error message every time a specific report is generated. Other applications remain fully functional. What is the MOST likely cause?",
+      options: [
+        "Application-level corruption or software incompatibility",
+        "Impending hard drive mechanical failure",
+        "Faulty motherboard voltage regulator",
+        "Insufficient power wattage from the PSU"
+      ],
+      correct: 0,
+      explain: "When a single application crashes or silently exits while the rest of the OS operates normally, the root cause is application-specific (corrupt application files, missing dependencies, or software bugs), not hardware."
+    },
+    {
+      cat: "mobo-power",
+      scenario: "While inspecting a PC chassis during operation, a technician hears a loud, metal-on-metal scraping noise originating near the front intake bay. What is the MOST likely source of this noise?",
+      options: [
+        "A failing chassis cooling fan bearing",
+        "A damaged CPU socket pin",
+        "An ungrounded motherboard standoff",
+        "A shorting power supply capacitor"
+      ],
+      correct: 0,
+      explain: "Mechanical grinding or scraping sounds inside a chassis are caused by moving parts — predominantly failing bearings in cooling fans or fan blades contacting internal cables/chassis frames."
+    },
+
+    // --- 5.3 Storage drives and RAID arrays ---
+    {
+      cat: "storage-raid",
+      scenario: "A technician receives an alert from an enterprise monitoring console stating that a physical disk in a RAID 5 volume has suffered a predictive failure based on elevated reallocated sector counts. Which tool provided this diagnostic information?",
+      options: [
+        "S.M.A.R.T. monitoring utility",
+        "Windows Disk Management console",
+        "Chkdsk system file repair",
+        "RAID rebuild wizard"
+      ],
+      correct: 0,
+      explain: "S.M.A.R.T. (Self-Monitoring, Analysis and Reporting Technology) monitors internal drive metrics like bad sectors, temperature, and read/write retry counts to predict drive failures before complete mechanical or electrical loss."
+    },
+    {
+      cat: "storage-raid",
+      scenario: "A system administrator arrives at the server room and notices a solid amber LED on drive bay slot 3 of a hardware RAID 5 array. Users report that data is still accessible, but system performance is slightly degraded. What is the status of the RAID array?",
+      options: [
+        "The array is fully optimal.",
+        "The array is operating in a degraded state.",
+        "The array has experienced total failure and lost data.",
+        "The array is performing an automated striping pass."
+      ],
+      correct: 1,
+      explain: "RAID 5 can tolerate a single drive failure without data loss due to distributed parity. A single failed drive drops the array into a 'degraded' state, indicated visually by a solid amber/yellow fault LED on the affected bay drive tray."
+    },
+    {
+      cat: "storage-raid",
+      scenario: "A user reports that opening large CAD files on their workstation now takes over 10 minutes, whereas it previously took seconds. The drive is an older 7200 RPM HDD. During file access, a rhythmic clicking sound originates from inside the computer case. What is the BEST immediate recommendation?",
+      options: [
+        "Defragment the hard drive using Windows Optimize Drives.",
+        "Run `chkdsk /r` immediately to fix sector errors.",
+        "Back up critical data immediately and replace the drive.",
+        "Format the partition and reinstall the OS."
+      ],
+      correct: 2,
+      explain: "The rhythmic clicking noise (often called the 'click of death') indicates a severe mechanical malfunction of the drive's actuator arm or read/write heads. Attempting disk-intensive repairs like `chkdsk` or defragmentation will likely cause total drive failure before data can be secured."
+    },
+    {
+      cat: "storage-raid",
+      scenario: "A technician installs a second NVMe M.2 SSD into an existing system. After booting into Windows, the new drive does not appear under 'This PC' in File Explorer. The drive IS correctly identified inside the UEFI/BIOS menu. What is the NEXT step the technician should take?",
+      options: [
+        "Initialize and format the drive using Disk Management.",
+        "Enable RAID mode in the motherboard storage configuration.",
+        "Replace the NVMe drive as it is DOA (Dead on Arrival).",
+        "Flash the motherboard BIOS to the latest release."
+      ],
+      correct: 0,
+      explain: "If the UEFI/BIOS detects the storage hardware, the connection is good. Brand new unformatted drives must be initialized (partitioned with GPT/MBR) and formatted (e.g., NTFS) in Disk Management before Windows assigns a drive letter."
+    },
+    {
+      cat: "storage-raid",
+      scenario: "A system administrator needs to verify the physical health status of a drive array on a rackmount server without interrupting running services or connecting to a remote management console. Where should the administrator look FIRST?",
+      options: [
+        "Drive bay status indicators (LEDs)",
+        "Server motherboard diagnostic post card",
+        "Integrated Dell Remote Access Controller (iDRAC) log file",
+        "Storage Controller PCI Express physical connection"
+      ],
+      correct: 0,
+      explain: "Physical drive bays in enterprise hardware feature status LEDs (e.g., green for healthy, amber/yellow for fault/rebuild). This provides an instant visual status check without needing software logins."
+    },
+    {
+      cat: "storage-raid",
+      scenario: "An employee attempts to open critical financial spreadsheets on a shared network drive and receives an error stating 'File corrupted or unreadable format'. Further inspection shows several random files in the directory contain garbled ASCII characters. What is the MOST likely cause?",
+      options: [
+        "Bad sectors on the storage media causing data corruption",
+        "High latency on the local area network",
+        "A mismatch in the storage controller firmware",
+        "The network switch port flapping between speed modes"
+      ],
+      correct: 0,
+      explain: "Garbled file content and unreadable files without OS-level network errors are primary indicators of storage data loss or corruption, often stemming from degraded sectors or failing NAND/magnetic surfaces."
+    },
+    {
+      cat: "storage-raid",
+      scenario: "A server configured with a hardware RAID 1 mirror experiences a failure on Drive 1. The server remains operational. A technician replaces the failed drive with an identical model. What MUST happen NEXT for the array to return to optimal health?",
+      options: [
+        "The storage controller must perform a volume rebuild.",
+        "The operating system must be reinstalled on Drive 0.",
+        "The array must be converted to a RAID 0 striped set.",
+        "The host bus adapter (HBA) firmware must be flashed."
+      ],
+      correct: 0,
+      explain: "In a redundant RAID setup (like RAID 1 or RAID 5), replacing a failed drive requires the RAID controller to rebuild the missing data onto the new replacement drive using parity or mirrored data."
+    },
+    {
+      cat: "storage-raid",
+      scenario: "A database administrator notices that transactional database write operations have dropped significantly from 15,000 to 1,200 per second, severely impacting application throughput. CPU and RAM resources are under 20% utilization. Which metric BEST quantifies this storage bottleneck?",
+      options: [
+        "IOPS (Input/Output Operations Per Second)",
+        "Storage Bus Latency Throttling",
+        "S.M.A.R.T. Reallocated Sector Threshold",
+        "RAID Parity Calculation Overhead"
+      ],
+      correct: 0,
+      explain: "IOPS measures the number of discrete read/write operations a storage subsystem can perform per second. A drastic drop in IOPS directly indicates storage subsystem performance degradation."
+    },
+    {
+      cat: "storage-raid",
+      scenario: "After a sudden facility power outage, a desktop user turns on their system and receives a black screen with the message 'BOOTMGR is missing or non-system disk error'. What initial troubleshooting step should the technician perform?",
+      options: [
+        "Check boot device order in UEFI/BIOS and verify storage cabling.",
+        "Replace the primary motherboard and storage controller.",
+        "Perform a low-level hardware format on the storage drive.",
+        "Re-seat the system RAM and clear CMOS."
+      ],
+      correct: 0,
+      explain: "A 'bootable device not found' or missing BOOTMGR message means the system BIOS cannot locate a active partition with boot files. Verifying drive power/SATA cables and BIOS boot priorities is the essential first step."
+    },
+    {
+      cat: "storage-raid",
+      scenario: "A workstation user reports that copying a 5GB file from one local folder to another on the same drive used to take 10 seconds, but now takes over 25 minutes. No other processes are running. What is the MOST likely cause?",
+      options: [
+        "The hard drive is experiencing extended read/write delays due to impending failure.",
+        "The SATA controller mode reverted from AHCI to IDE.",
+        "The display adapter driver requires an update.",
+        "The operating system paging file size was reduced."
+      ],
+      correct: 0,
+      explain: "Extremely long file transfer times (extended read/write times) on mechanical drives or SSDs are classic signs of failing sectors or severe drive throttling due to hardware degradation."
+    },
+
+    // --- 5.5 Mobile devices ---
+    {
+      cat: "mobile",
+      scenario: "A user brings a company smartphone to the helpdesk because the glass screen is lifting away from the metal frame on one side. The screen touch controls still function, but the phone feels unusually hot while charging. What action should the technician take FIRST?",
+      options: [
+        "Apply adhesive to clamp the screen back onto the chassis.",
+        "Power off the device and isolate it in a fire-safe enclosure.",
+        "Calibrate the digitizer using the touch screen menu.",
+        "Replace the broken digitizer assembly."
+      ],
+      correct: 1,
+      explain: "A screen lifting due to internal pressure is a classic sign of a swollen lithium-ion battery. Swollen batteries pose a severe chemical and thermal runaway hazard; the device must be powered down safely and quarantined immediately."
+    },
+    {
+      cat: "mobile",
+      scenario: "An employee drops their tablet on concrete. The display panel shows clear visual images, but the screen does not respond to finger gestures or taps anywhere on the glass surface. Which component needs to be replaced?",
+      options: [
+        "OLED Backlight inverter",
+        "Digitizer",
+        "Graphics Processing Unit (GPU)",
+        "Display controller chip"
+      ],
+      correct: 1,
+      explain: "The digitizer is the touch-sensitive glass layer overlying the display panel that converts analog touch inputs into digital signals. If image output works fine but touch input fails, the digitizer layer is damaged."
+    },
+    {
+      cat: "mobile",
+      scenario: "A mobile worker reports that their tablet's battery drains from 100% to 0% within one hour. Additionally, the device frequently triggers unexpected pop-up windows and sends unauthorized background data transfers over cellular data. What is the MOST likely cause?",
+      options: [
+        "Degraded lithium-ion cell health",
+        "Malicious software infection",
+        "Faulty charging adapter wattage",
+        "Misconfigured APN settings"
+      ],
+      correct: 1,
+      explain: "Rapid battery depletion combined with excessive background network usage and pop-up alerts strongly points to a malware infection actively running unauthorized processes."
+    },
+    {
+      cat: "mobile",
+      scenario: "A smartphone user reports that their battery level indicator stays at 100% for hours while plugged into an aftermarket wall brick, but drops to zero and powers off instantly within 5 minutes of unplugging it. What is the MOST likely cause?",
+      options: [
+        "Degraded/failing battery or improper charging circuit performance",
+        "Corrupted operating system display calibration",
+        "Excessive cellular antenna transmission power",
+        "Defective touchscreen digitizer draw"
+      ],
+      correct: 0,
+      explain: "Inability to charge properly or maintain charge capacity points directly to battery chemical degradation or an faulty charging controller circuit."
+    },
+    {
+      cat: "mobile",
+      scenario: "A field agent notices that their tablet loses cellular data connection whenever they leave the main office building, displaying an 'No Service' indicator. Colleagues with the same cellular carrier do not experience this issue. What should the technician verify FIRST?",
+      options: [
+        "Verify SIM card seating and cellular data settings in OS.",
+        "Replace the tablets internal cellular modem hardware.",
+        "Perform a factory reset on the mobile device.",
+        "Flash the mobile device bootloader."
+      ],
+      correct: 0,
+      explain: "Loss of cellular connectivity isolated to a single device often stems from a loose physical SIM card, misconfigured APN/network settings, or cellular data being accidentally toggled off."
+    },
+    {
+      cat: "mobile",
+      scenario: "An employee accidental spills a cup of coffee over their company-issued laptop keyboard. The laptop instantly turns off. What should the technician instruct the user to do immediately?",
+      options: [
+        "Unplug the charger, remove external power, and do NOT attempt to turn it on.",
+        "Blow warm air using a hair dryer into the keyboard keys.",
+        "Connect the laptop to an external monitor to verify display function.",
+        "Plug in the charger to force battery discharge."
+      ],
+      correct: 0,
+      explain: "Liquid intrusion creates immediate short-circuit risks. Powering off, disconnecting AC power, and withholding power until the unit is opened and thoroughly dried prevents irreversible electrical damage."
+    },
+    {
+      cat: "mobile",
+      scenario: "A mobile worker reports that after leaving their smartphone on a vehicle dashboard in direct sunlight for an hour, the device displays a temperature warning icon and disabled all high-power functions. What automatic mechanism occurred?",
+      options: [
+        "Thermal throttling and protective thermal shutdown",
+        "Malware payload execution triggered by ambient light",
+        "Digitizer failure caused by UV exposure",
+        "Cellular modem radio frequency lockout"
+      ],
+      correct: 0,
+      explain: "Modern mobile devices incorporate active thermal protection. When internal sensors detect unsafe ambient temperatures, they throttle performance and dim or disable features to prevent thermal runaway."
+    },
+    {
+      cat: "mobile",
+      scenario: "A user states that when attempting to charge their laptop using the USB-C power port, the cable feels loose and wiggles significantly. The charging light blinks intermittently only when the cable is held at a specific angle. What is the diagnosis?",
+      options: [
+        "Physically damaged charging port",
+        "Incompatible charger wattage output",
+        "Corrupted power management driver",
+        "Overheated lithium-ion battery"
+      ],
+      correct: 0,
+      explain: "A loose fit combined with connection loss depending on cable angle indicates physical wear or mechanical failure of the internal port pins or housing."
+    },
+    {
+      cat: "mobile",
+      scenario: "A laptop user notices that when typing documents, the mouse cursor frequently jumps to different paragraphs randomly, selecting and overwriting text. What action is MOST likely to fix this issue?",
+      options: [
+        "Calibrate or disable the touch pad while typing.",
+        "Replace the display panel digitizer assembly.",
+        "Update the graphics processing unit (GPU) drivers.",
+        "Adjust the screen refresh rate in advanced settings."
+      ],
+      correct: 0,
+      explain: "Accidental palm contact on sensitive laptop touchpads triggers cursor drift or unintended clicks. Adjusting touchpad sensitivity or recalibrating palm rejection settings resolves cursor drift."
+    },
+
+    // --- 5.7 Wired and wireless networks ---
+    {
+      cat: "networks",
+      scenario: "A user is unable to access local network shares or the internet. The technician runs `ipconfig /all` on the workstation and receives the following output:\nIPv4 Address: 169.254.88.201\nSubnet Mask: 255.255.0.0\nDefault Gateway: [Blank]\nWhat is the MOST likely cause of this network issue?",
+      options: [
+        "The DNS server configuration is incorrect.",
+        "The workstation cannot communicate with the DHCP server.",
+        "The network switch port is configured with port security blocking MAC address.",
+        "The network interface card (NIC) is hardware defective."
+      ],
+      correct: 1,
+      explain: "An IP address in the `169.254.0.0/16` range is an Automatic Private IP Address (APIPA). Windows self-assigns an APIPA address when the client interface is set to receive an address automatically but fails to contact or receive a response from a DHCP server."
+    },
+    {
+      cat: "networks",
+      scenario: "A remote worker using a Softphone VoIP client reports that callers frequently state their voice sounds 'robotic, choppy, and broken up.' A speed test shows 200 Mbps download and 20 Mbps upload. Which network metric is MOST likely causing the audio degradation?",
+      options: [
+        "High Latency",
+        "Excessive Jitter",
+        "Duplex Mismatch",
+        "Low Throughput"
+      ],
+      correct: 1,
+      explain: "Jitter refers to the variation in packet arrival time delays. Real-time audio applications like VoIP require steady data delivery; high jitter causes voice packets to arrive out of order or bursty, resulting in choppy audio."
+    },
+    {
+      cat: "networks",
+      scenario: "Network logs show that interface GigabitEthernet 0/12 on an access switch is repeatedly toggling between 'UP' and 'DOWN' operational states every few seconds. Which physical issue should the technician investigate FIRST?",
+      options: [
+        "A faulty or damaged Ethernet patch cable",
+        "An incorrect subnet mask assignment on the host",
+        "Interference from a nearby 5GHz Wi-Fi access point",
+        "A duplicate IP address conflict on the subnet"
+      ],
+      correct: 0,
+      explain: "Rapid cycling between 'up' and 'down' link states is known as 'port flapping'. This physical layer failure is most commonly triggered by damaged cable pinouts, loose RJ-45 connectors, bad patch panels, or failing NIC transceivers."
+    },
+    {
+      cat: "networks",
+      scenario: "Employees in a warehouse report that their handheld Wi-Fi scanners lose connection to the access point every afternoon around 12:30 PM, specifically near the breakroom. The issue resolves automatically after 30 minutes. What is the MOST likely cause?",
+      options: [
+        "DHCP lease expiration for handheld units",
+        "RF interference from a microwave oven operating on 2.4 GHz",
+        "Incorrect SSID security key exchange",
+        "Overloaded RADIUS authentication server"
+      ],
+      correct: 1,
+      explain: "Microwave ovens operate on the 2.4 GHz unlicensed ISM band. Poor shielding or heavy usage during lunch breaks creates intense radio frequency (RF) interference, disrupting nearby 2.4 GHz Wi-Fi connections."
+    },
+    {
+      cat: "networks",
+      scenario: "An administrator receives multiple helpdesk tickets stating that web browsing is extremely slow for all employees in a branch office. File transfers to local network servers are operating at full gigabit speeds. What is the MOST likely cause?",
+      options: [
+        "WAN bandwidth saturation or ISP throttling",
+        "Local Ethernet switch port flapping",
+        "A rogue DHCP server assigning APIPA addresses",
+        "A widespread cabling short circuit on local drops"
+      ],
+      correct: 0,
+      explain: "If internal local network traffic performs at full speed, local cabling and switches are healthy. Slower speeds restricted to external web traffic points to internet link (WAN) saturation or ISP issues."
+    },
+    {
+      cat: "networks",
+      scenario: "A network host is configured with the IP address `10.1.10.45/24`. The user cannot reach external websites. The technician attempts to ping the gateway `10.1.10.1` and receives successful replies, but pinging `8.8.8.8` fails. What is the cause?",
+      options: [
+        "The default gateway lacks an active route to the internet.",
+        "The host is receiving an APIPA address allocation.",
+        "The local network switch has port security enabled.",
+        "The network cable is wired using T568A instead of T568B."
+      ],
+      correct: 0,
+      explain: "Successful pings to the local default gateway confirm local LAN functionality. An inability to ping external IP addresses (like 8.8.8.8) indicates that the router/gateway has no valid WAN path or routing table entry."
+    },
+    {
+      cat: "networks",
+      scenario: "A network engineer is configuring a real-time video conferencing environment. During testing, video frames freeze intermittently and resume in fast-forward bursts. Bandwidth utilization is under 30%. What network issue is occurring?",
+      options: [
+        "High Jitter (variable packet delay)",
+        "Duplex mismatch on the switch port",
+        "Subnet mask misconfiguration",
+        "Excessive electromagnetic interference on CAT6 cables"
+      ],
+      correct: 0,
+      explain: "Jitter measures the variation in latency between arriving packets. In real-time video/voice streaming, high jitter causes delayed packet buffer buildup, displaying as choppy playback or fast-forward bursts."
+    },
+    {
+      cat: "networks",
+      scenario: "An office VoIP telephone system experiences frequent dropped calls. Callers report that audio sounds 'garbled and robotic'. The network administrator decides to implement Quality of Service (QoS) on the network switches. What will QoS accomplish?",
+      options: [
+        "Prioritize voice traffic packets over general data traffic.",
+        "Increase the physical link speed of the Ethernet switch ports.",
+        "Encrypt VoIP traffic packets using IPSec tunnels.",
+        "Automatically assign static IP addresses to telephone handsets."
+      ],
+      correct: 0,
+      explain: "Quality of Service (QoS) flags and prioritizes latency-sensitive traffic (like VoIP and real-time video) ahead of standard data traffic (like web browsing or file downloads) during network congestion."
+    },
+    {
+      cat: "networks",
+      scenario: "A user in a large corporate building reports that their wireless connection drops frequently when walking between conference rooms located at opposite ends of the floor. What wireless issue is occurring?",
+      options: [
+        "Poor roaming handoff between wireless access points (APs)",
+        "Incorrect WPA3 security passphrase configuration",
+        "Exceeded DHCP scope address pool capability",
+        "Frequency channel overlap on 5GHz spectrum"
+      ],
+      correct: 0,
+      explain: "When a mobile device moves across coverage zones without disconnecting properly from a weak AP to join a stronger AP, it indicates improper wireless roaming profile settings or misconfigured AP signal coverage."
+    }
+  ];
+
+  let currentDeck = 'methodology';
+  let currentCat = 'all';
+  let currentMode = 'flash';
+  let correctCount = 0;
+  let incorrectCount = 0;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function catLabel(c){
+    if(c === 'methodology') return '5.1 METHODOLOGY';
+    if(c === 'mobo-power') return '5.2 MOBO/RAM/CPU/POWER';
+    if(c === 'storage-raid') return '5.3 STORAGE/RAID';
+    if(c === 'mobile') return '5.5 MOBILE DEVICE';
+    return '5.7 NETWORK';
+  }
+
+  function getPracticePool(){
+    return currentCat === 'all' ? PRACTICE : PRACTICE.filter(x => x.cat === currentCat);
+  }
+
+  function updateSharedStats(leftCount, total){
+    document.getElementById('statCorrect').textContent = correctCount;
+    document.getElementById('statIncorrect').textContent = incorrectCount;
+    document.getElementById('statLeft').textContent = leftCount;
+    const done = total - leftCount;
+    document.getElementById('progressFill').style.width = Math.max(0, Math.min(100, Math.round((done / total) * 100))) + '%';
+  }
+
+  /* ================= METHODOLOGY: FLASHCARD MODE ================= */
+  let flashDeck = [];
+  let flashCurrent = null;
+  let flashRevealed = false;
+  const flashArea = document.getElementById('flashArea');
+
+  function flashNewRound(){
+    flashDeck = shuffle(METHOD_DATA);
+    flashNextCard();
+  }
+  function flashNextCard(){
+    flashRevealed = false;
+    if(flashDeck.length === 0){ flashDeck = shuffle(METHOD_DATA); }
+    flashCurrent = flashDeck.pop();
+    flashRender();
+  }
+  function flashRender(){
+    updateSharedStats(flashDeck.length + 1, METHOD_DATA.length);
+    flashArea.innerHTML = `
+      <div class="card ${flashRevealed ? 'revealed' : ''}" id="cardEl">
+        <div class="tag">${catLabel(flashCurrent.cat)}</div>
+        <div class="label">Define / Explain</div>
+        <div class="protocol">${flashCurrent.p}</div>
+        <div class="answer">${flashCurrent.a}</div>
+        <div class="hint">Tap the card to reveal</div>
+      </div>
+      ${flashRevealed ? `
+        <div class="actions">
+          <button class="no" id="noBtn">✕ Didn't know it</button>
+          <button class="yes" id="yesBtn">✓ Knew it</button>
+        </div>
+      ` : `<button class="reveal-btn" id="revealBtn">Reveal answer</button>`}
+    `;
+    document.getElementById('cardEl').addEventListener('click', () => {
+      if(!flashRevealed){ flashRevealed = true; flashRender(); }
+    });
+    if(flashRevealed){
+      document.getElementById('yesBtn').addEventListener('click', (e) => { e.stopPropagation(); correctCount++; flashNextCard(); });
+      document.getElementById('noBtn').addEventListener('click', (e) => {
+        e.stopPropagation(); incorrectCount++;
+        flashDeck.splice(Math.max(0, flashDeck.length - 3), 0, flashCurrent);
+        flashNextCard();
+      });
+    } else {
+      document.getElementById('revealBtn').addEventListener('click', (e) => { e.stopPropagation(); flashRevealed = true; flashRender(); });
+    }
+  }
+
+  /* ================= METHODOLOGY: MCQ MODE ================= */
+  let mQcmDeck = [];
+  let mQcmCurrent = null;
+  let mQcmOptions = [];
+  let mQcmType = 'spec';
+  let mQcmAnswered = false;
+  const qcmArea = document.getElementById('qcmArea');
+
+  function mQcmNewRound(){ mQcmDeck = shuffle(METHOD_DATA); mQcmNext(); }
+  function mQcmNext(){
+    mQcmAnswered = false;
+    if(mQcmDeck.length === 0){ mQcmDeck = shuffle(METHOD_DATA); }
+    mQcmCurrent = mQcmDeck.pop();
+    mQcmType = Math.random() < 0.5 ? 'spec' : 'function';
+    const distractors = shuffle(METHOD_DATA.filter(x => x.p !== mQcmCurrent.p)).slice(0, 3);
+    mQcmOptions = shuffle([mQcmCurrent, ...distractors]);
+    mQcmRender();
+  }
+  function mQcmRender(){
+    updateSharedStats(mQcmDeck.length + 1, METHOD_DATA.length);
+    const q = mQcmType === 'spec'
+      ? `Which step matches:<br><span class="hl">${mQcmCurrent.a}</span> ?`
+      : `Which step matches this description:<br><span class="hl" style="font-size:13.5px;">${mQcmCurrent.f}</span> ?`;
+    qcmArea.innerHTML = `
+      <div class="qcm-card">
+        <div class="tag">${catLabel(mQcmCurrent.cat)}</div>
+        <div class="label">MCQ</div>
+        <div class="question short">${q}</div>
+        <div class="qcm-options">${mQcmOptions.map((o,i)=>`<button class="qcm-option" data-idx="${i}">${o.p}</button>`).join('')}</div>
+      </div>
+      ${mQcmAnswered ? `<button class="next-btn" id="mQcmNextBtn">Next →</button>` : ''}
+    `;
+    qcmArea.querySelectorAll('.qcm-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if(mQcmAnswered) return;
+        mQcmAnswered = true;
+        const idx = parseInt(btn.dataset.idx,10);
+        const chosen = mQcmOptions[idx];
+        const isCorrect = chosen.p === mQcmCurrent.p;
+        if(isCorrect){ correctCount++; } else {
+          incorrectCount++;
+          mQcmDeck.splice(Math.max(0, mQcmDeck.length - 3), 0, mQcmCurrent);
+        }
+        qcmArea.querySelectorAll('.qcm-option').forEach(b => {
+          b.classList.add('disabled');
+          const bOpt = mQcmOptions[parseInt(b.dataset.idx,10)];
+          if(bOpt.p === mQcmCurrent.p) b.classList.add('correct');
+          else if(b === btn) b.classList.add('wrong');
+        });
+        mQcmRenderNextBtn();
+        updateSharedStats(mQcmDeck.length + 1, METHOD_DATA.length);
+      });
+    });
+    if(mQcmAnswered){ mQcmRenderNextBtn(); }
+  }
+  function mQcmRenderNextBtn(){
+    if(qcmArea.querySelector('#mQcmNextBtn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'next-btn'; btn.id = 'mQcmNextBtn'; btn.textContent = 'Next →';
+    btn.addEventListener('click', mQcmNext);
+    qcmArea.appendChild(btn);
+  }
+
+  /* ================= METHODOLOGY: MATCHING MODE ================= */
+  let matchSet = [], matchLeft = [], matchRight = [], matchedIds = new Set(), selLeft = null, selRight = null;
+  const matchArea = document.getElementById('matchArea');
+
+  function matchNewRound(){
+    matchSet = shuffle(METHOD_DATA);
+    matchLeft = shuffle(matchSet);
+    matchRight = shuffle(matchSet);
+    matchedIds = new Set(); selLeft = null; selRight = null;
+    matchRender();
+  }
+  function matchRender(){
+    updateSharedStats(matchSet.length - matchedIds.size, METHOD_DATA.length);
+    if(matchSet.length > 0 && matchedIds.size === matchSet.length){
+      matchArea.innerHTML = `<div class="match-wrap"><div class="match-done"><div class="msg">✓ Round complete!</div><button class="next-btn" id="matchNextBtn" style="margin-top:0;">New round →</button></div></div>`;
+      document.getElementById('matchNextBtn').addEventListener('click', matchNewRound);
+      return;
+    }
+    matchArea.innerHTML = `
+      <div class="match-wrap">
+        <div class="match-title">Match the description to the correct step</div>
+        <div class="match-cols">
+          <div class="match-col" id="matchColLeft">
+            ${matchLeft.map(item => `<div class="match-item ${matchedIds.has(item.p)?'matched':''} ${selLeft&&selLeft.p===item.p?'selected':''}" data-p="${item.p}">${item.f}</div>`).join('')}
+          </div>
+          <div class="match-col" id="matchColRight">
+            ${matchRight.map(item => `<div class="match-item name ${matchedIds.has(item.p)?'matched':''} ${selRight&&selRight.p===item.p?'selected':''}" data-p="${item.p}">${item.p}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+    matchArea.querySelectorAll('#matchColLeft .match-item:not(.matched)').forEach(el => {
+      el.addEventListener('click', () => { selLeft = matchSet.find(x => x.p === el.dataset.p); matchCheckPair(); matchRender(); });
+    });
+    matchArea.querySelectorAll('#matchColRight .match-item:not(.matched)').forEach(el => {
+      el.addEventListener('click', () => { selRight = matchSet.find(x => x.p === el.dataset.p); matchCheckPair(); matchRender(); });
+    });
+  }
+  function matchCheckPair(){
+    if(!selLeft || !selRight) return;
+    if(selLeft.p === selRight.p){ matchedIds.add(selLeft.p); correctCount++; }
+    else {
+      incorrectCount++;
+      const wrongP = selRight.p;
+      selLeft = null; selRight = null;
+      matchRender();
+      const el = matchArea.querySelector(`#matchColRight .match-item[data-p="${CSS.escape(wrongP)}"]`);
+      if(el){ el.classList.add('wrong-flash'); setTimeout(() => el.classList.remove('wrong-flash'), 350); }
+      return;
+    }
+    selLeft = null; selRight = null;
+  }
+
+  /* ================= PRACTICE QUESTIONS (scenario MCQ) ================= */
+  let pDeck = [];
+  let pCurrent = null;
+  let pAnswered = false;
+  const practiceArea = document.getElementById('practiceArea');
+
+  function practiceNewRound(){
+    pDeck = shuffle(getPracticePool());
+    practiceNext();
+  }
+  function practiceNext(){
+    pAnswered = false;
+    const pool = getPracticePool();
+    if(pDeck.length === 0){ pDeck = shuffle(pool); }
+    pCurrent = pDeck.pop();
+    practiceRender();
+  }
+  function practiceRender(){
+    const pool = getPracticePool();
+    updateSharedStats(pDeck.length + 1, pool.length);
+
+    practiceArea.innerHTML = `
+      <div class="qcm-card">
+        <div class="tag">${catLabel(pCurrent.cat)}</div>
+        <div class="prompt">Scenario</div>
+        <div class="question">${pCurrent.scenario}</div>
+        <div class="qcm-options">
+          ${pCurrent.options.map((opt,i) => `<button class="qcm-option" data-idx="${i}">${opt}</button>`).join('')}
+        </div>
+        <div class="explain" id="pExplain"><b>Why:</b> ${pCurrent.explain}</div>
+      </div>
+      ${pAnswered ? `<button class="next-btn" id="pNextBtn">Next →</button>` : ''}
+    `;
+
+    practiceArea.querySelectorAll('.qcm-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if(pAnswered) return;
+        pAnswered = true;
+        const idx = parseInt(btn.dataset.idx, 10);
+        const isCorrect = idx === pCurrent.correct;
+
+        if(isCorrect){ correctCount++; }
+        else {
+          incorrectCount++;
+          pDeck.splice(Math.max(0, pDeck.length - 3), 0, pCurrent);
+        }
+
+        practiceArea.querySelectorAll('.qcm-option').forEach((b, i) => {
+          b.classList.add('disabled');
+          if(i === pCurrent.correct) b.classList.add('correct');
+          else if(b === btn) b.classList.add('wrong');
+        });
+        document.getElementById('pExplain').classList.add('show');
+
+        practiceRenderNextBtn();
+        updateSharedStats(pDeck.length + 1, pool.length);
+      });
+    });
+
+    if(pAnswered){ practiceRenderNextBtn(); }
+  }
+  function practiceRenderNextBtn(){
+    if(practiceArea.querySelector('#pNextBtn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'next-btn'; btn.id = 'pNextBtn'; btn.textContent = 'Next →';
+    btn.addEventListener('click', practiceNext);
+    practiceArea.appendChild(btn);
+  }
+
+  /* ================= DECK / CATEGORY / TAB SWITCHING ================= */
+  const catsBar = document.getElementById('catsBar');
+  const tabsBar = document.getElementById('tabsBar');
+  const subText = document.getElementById('subText');
+
+  function showMethodologyUI(){
+    catsBar.classList.add('hidden');
+    tabsBar.classList.remove('hidden');
+    flashArea.classList.toggle('hidden', currentMode !== 'flash');
+    qcmArea.classList.toggle('hidden', currentMode !== 'qcm');
+    matchArea.classList.toggle('hidden', currentMode !== 'match');
+    practiceArea.classList.add('hidden');
+    subText.textContent = 'Troubleshooting methodology — the 6 steps, drilled as flashcards.';
+  }
+  function showPracticeUI(){
+    catsBar.classList.remove('hidden');
+    tabsBar.classList.add('hidden');
+    flashArea.classList.add('hidden');
+    qcmArea.classList.add('hidden');
+    matchArea.classList.add('hidden');
+    practiceArea.classList.remove('hidden');
+    subText.textContent = 'Exam-style scenario questions covering 5.2, 5.3, 5.5, and 5.7 — pick the best answer.';
+  }
+
+  function renderCurrentMode(){
+    if(currentDeck === 'methodology'){
+      if(currentMode === 'flash') flashRender();
+      if(currentMode === 'qcm') mQcmRender();
+      if(currentMode === 'match') matchRender();
+    } else {
+      practiceRender();
+    }
+  }
+
+  function restartAllRounds(){
+    if(currentDeck === 'methodology'){
+      flashNewRound(); mQcmNewRound(); matchNewRound();
+    } else {
+      practiceNewRound();
+    }
+  }
+
+  document.querySelectorAll('.deck').forEach(deck => {
+    deck.addEventListener('click', () => {
+      if(deck.dataset.deck === currentDeck) return;
+      document.querySelectorAll('.deck').forEach(d => d.classList.remove('active'));
+      deck.classList.add('active');
+      currentDeck = deck.dataset.deck;
+      correctCount = 0; incorrectCount = 0;
+      if(currentDeck === 'methodology'){ showMethodologyUI(); currentMode = 'flash';
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.mode === 'flash'));
+      } else {
+        showPracticeUI(); currentCat = 'all';
+        document.querySelectorAll('.cat').forEach(c => c.classList.toggle('active', c.dataset.cat === 'all'));
+      }
+      restartAllRounds();
+      renderCurrentMode();
+    });
+  });
+
+  document.querySelectorAll('.cat').forEach(cat => {
+    cat.addEventListener('click', () => {
+      if(cat.dataset.cat === currentCat) return;
+      document.querySelectorAll('.cat').forEach(c => c.classList.remove('active'));
+      cat.classList.add('active');
+      currentCat = cat.dataset.cat;
+      correctCount = 0; incorrectCount = 0;
+      practiceNewRound();
+      practiceRender();
+    });
+  });
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      if(tab.dataset.mode === currentMode) return;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentMode = tab.dataset.mode;
+      flashArea.classList.toggle('hidden', currentMode !== 'flash');
+      qcmArea.classList.toggle('hidden', currentMode !== 'qcm');
+      matchArea.classList.toggle('hidden', currentMode !== 'match');
+      renderCurrentMode();
+    });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    correctCount = 0; incorrectCount = 0;
+    restartAllRounds();
+    renderCurrentMode();
+  });
+
+  // init
+  showMethodologyUI();
+  restartAllRounds();
+</script>
+
+</body>
+</html>
