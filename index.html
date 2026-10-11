@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CompTIA A+ Core 2 (220-1102) - Objective 1.0 Mastery Suite</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-border: #334155;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --green: #22c55e;
+      --green-bg: rgba(34, 197, 94, 0.15);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.15);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.15);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    header {
+      background-color: var(--panel);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      background: #111827;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--panel-border);
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: var(--panel);
+      color: var(--text-muted);
+      border: 1px solid var(--panel-border);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    .nav-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Flashcards */
+    .fc-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    select, input[type="text"] {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--panel-border);
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    .flashcard-container {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 650px;
+      height: 380px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .flashcard.flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      background: var(--panel);
+      border: 2px solid var(--panel-border);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      border-color: var(--accent);
+      overflow-y: auto;
+    }
+
+    .card-tag {
+      align-self: flex-start;
+      background: var(--amber-bg);
+      color: var(--amber);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .card-text {
+      font-size: 1.2rem;
+      font-weight: 500;
+      text-align: center;
+      margin: 1rem 0;
+      white-space: pre-line;
+    }
+
+    .card-prompt {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .fc-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-secondary { background: var(--panel-border); color: var(--text); }
+
+    /* Quiz */
+    .quiz-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .quiz-question {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .option-btn {
+      background: #111827;
+      color: var(--text);
+      border: 1px solid var(--panel-border);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      border-color: var(--accent);
+      background: #1f2937;
+    }
+
+    .option-btn.correct {
+      background: var(--green-bg);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .option-btn.incorrect {
+      background: var(--red-bg);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .quiz-explanation {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      background: #0f172a;
+      border-left: 4px solid var(--accent);
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    .quiz-explanation.show { display: block; }
+
+    /* Cheat Sheet / Notes */
+    .cheat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .cheat-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+
+    .cheat-card h3 {
+      color: var(--accent);
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    th, td {
+      border: 1px solid var(--panel-border);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background: #111827;
+      color: var(--accent);
+    }
+
+    code {
+      font-family: var(--font-mono);
+      background: #0f172a;
+      color: var(--amber);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    /* Terminal Simulator */
+    .terminal {
+      background: #000;
+      color: #00ff66;
+      font-family: var(--font-mono);
+      padding: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid var(--panel-border);
+      min-height: 350px;
+      box-shadow: inset 0 0 10px rgba(0,255,102,0.1);
+    }
+
+    .term-output {
+      height: 260px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      white-space: pre-wrap;
+      font-size: 0.9rem;
+    }
+
+    .term-input-line {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .term-prompt { color: var(--accent); }
+
+    .term-input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      flex: 1;
+      outline: none;
+      padding: 0;
+    }
+
+    .score-banner {
+      background: var(--panel);
+      border: 1px solid var(--accent);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>CompTIA A+ Core 2 (220-1102)</h1>
+    <p>Domain 1.0: Operating Systems (OBJ 1.1 – 1.7) Complete Mastery Suite</p>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="switchTab('quiz')">Exam Practice Quiz</button>
+    <button class="nav-btn" onclick="switchTab('flashcards')">Interactive Flashcards</button>
+    <button class="nav-btn" onclick="switchTab('cheatsheet')">Objective Cheat Sheets</button>
+    <button class="nav-btn" onclick="switchTab('terminal')">CLI Command Simulator</button>
+  </nav>
+
+  <main>
+    <!-- QUIZ TAB -->
+    <div id="quiz" class="tab-content active">
+      <div class="score-banner" id="quizScore">
+        Score: <span id="correctCount">0</span> / <span id="totalAttempted">0</span> (<span id="scorePct">0%</span>)
+      </div>
+
+      <div class="fc-controls">
+        <select id="quizFilter" onchange="filterQuiz()">
+          <option value="all">All Sub-Objectives (1.1 - 1.7)</option>
+          <option value="1.1">1.1 Windows Features & Editions</option>
+          <option value="1.2">1.2 Installation & Upgrades</option>
+          <option value="1.3">1.3 Windows CLI Commands</option>
+          <option value="1.4">1.4 Admin Tools & Consoles</option>
+          <option value="1.5">1.5 Settings & Configuration</option>
+          <option value="1.6">1.6 macOS Tools & Features</option>
+          <option value="1.7">1.7 Linux CLI & Utilities</option>
+        </select>
+        <button class="btn btn-secondary" onclick="resetQuiz()">Reset Quiz</button>
+      </div>
+
+      <div id="quizContainer"></div>
+    </div>
+
+    <!-- FLASHCARDS TAB -->
+    <div id="flashcards" class="tab-content">
+      <div class="fc-controls">
+        <select id="fcFilter" onchange="filterFlashcards()">
+          <option value="all">All Cards</option>
+          <option value="1.1">1.1 Windows Editions</option>
+          <option value="1.2">1.2 Install & Filesystems</option>
+          <option value="1.3">1.3 Windows CLI</option>
+          <option value="1.4">1.4 Admin Tools</option>
+          <option value="1.5">1.5 Windows Settings</option>
+          <option value="1.6">1.6 macOS Tools</option>
+          <option value="1.7">1.7 Linux CLI</option>
+        </select>
+        <div id="fcProgress">Card 1 of 0</div>
+      </div>
+
+      <div class="flashcard-container">
+        <div class="flashcard" id="card" onclick="flipCard()">
+          <div class="card-face card-front">
+            <span class="card-tag" id="cardTag">Tag</span>
+            <div class="card-text" id="cardFrontText">Front Text</div>
+            <div class="card-prompt">Click to reveal answer</div>
+          </div>
+          <div class="card-face card-back">
+            <span class="card-tag" id="cardBackTag">Answer</span>
+            <div class="card-text" id="cardBackText">Back Text</div>
+            <div class="card-prompt">Click to flip back</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fc-buttons">
+        <button class="btn btn-secondary" onclick="prevCard()">Previous</button>
+        <button class="btn btn-primary" onclick="flipCard()">Flip</button>
+        <button class="btn btn-secondary" onclick="nextCard()">Next</button>
+      </div>
+    </div>
+
+    <!-- CHEAT SHEET TAB -->
+    <div id="cheatsheet" class="tab-content">
+      <div class="cheat-grid">
+        <!-- 1.1 -->
+        <div class="cheat-card">
+          <h3>1.1 Windows Features & Editions</h3>
+          <table>
+            <tr><th>Edition</th><th>Max RAM</th><th>CPU Sockets</th><th>Domain Join / RDP Host</th></tr>
+            <tr><td>Home</td><td>128 GB</td><td>1</td><td>No / No</td></tr>
+            <tr><td>Pro</td><td>2 TB</td><td>2</td><td>Yes / Yes</td></tr>
+            <tr><td>Enterprise</td><td>2 TB</td><td>2</td><td>Yes / Yes (AppLocker, DirectAccess)</td></tr>
+            <tr><td>Workstations</td><td>6 TB</td><td>4</td><td>Yes / Yes (ReFS, NVDIMM)</td></tr>
+          </table>
+          <p style="margin-top:0.8rem; font-size:0.85rem;">
+            <code>32-bit vs 64-bit</code>: 32-bit = Max 4 GB RAM. 64-bit = Up to 6 TB RAM.<br>
+            <code>BitLocker vs EFS</code>: BitLocker = Full volume encryption. EFS = Individual file/folder encryption on NTFS.
+          </p>
+        </div>
+
+        <!-- 1.2 -->
+        <div class="cheat-card">
+          <h3>1.2 Installation & Upgrades</h3>
+          <ul>
+            <li><b>In-place upgrade:</b> Preserves files, settings, and apps.</li>
+            <li><b>Clean install:</b> Wipes drive; requires reinstalling applications.</li>
+            <li><b>PXE Boot:</b> Network-based OS deployment using NIC boot ROM.</li>
+            <li><b>Unattended (`autounattend.xml`):</b> Automates setup prompts using Windows SIM.</li>
+            <li><b>Image Deployment:</b> <code>Sysprep</code> removes system-specific SIDs before capture; <code>DISM</code> services WIM images.</li>
+            <li><b>MBR vs GPT:</b> MBR = Max 2 TB, max 4 primary partitions. GPT = Max 9.4 ZB, up to 128 primary partitions (requires UEFI).</li>
+            <li><b>Filesystems:</b> FAT32 (4 GB file limit), exFAT (Flash drives, cross-platform), NTFS (Permissions, encryption, compression), ext4 (Linux native), CDFS (CD-ROMs).</li>
+          </ul>
+        </div>
+
+        <!-- 1.3 -->
+        <div class="cheat-card">
+          <h3>1.3 Windows CLI Cheat Sheet</h3>
+          <table>
+            <tr><th>Command</th><th>Primary Purpose</th></tr>
+            <tr><td><code>sfc /scannow</code></td><td>Scans & repairs corrupted protected system files</td></tr>
+            <tr><td><code>dism ... /restorehealth</code></td><td>Repairs damaged Windows component store / image</td></tr>
+            <tr><td><code>chkdsk /f /r</code></td><td><code>/f</code> fixes FS errors; <code>/r</code> locates bad sectors & recovers data</td></tr>
+            <tr><td><code>bootrec /fixmbr</code></td><td>Fixes corrupt Master Boot Record ("Invalid partition table")</td></tr>
+            <tr><td><code>bootrec /fixboot</code></td><td>Writes new boot sector to system partition</td></tr>
+            <tr><td><code>bootrec /rebuildbcd</code></td><td>Scans disks & rebuilds Boot Configuration Data store</td></tr>
+            <tr><td><code>ipconfig /flushdns</code></td><td>Clears local DNS resolver cache</td></tr>
+            <tr><td><code>pathping</code></td><td>Combines <code>tracert</code> path tracing with latency/packet loss stats per hop</td></tr>
+            <tr><td><code>robocopy</code></td><td>Robust file copy (resumes, mirrors directory trees, preserves ACLs)</td></tr>
+          </table>
+        </div>
+
+        <!-- 1.4 & 1.5 -->
+        <div class="cheat-card">
+          <h3>1.4 Admin Tools & 1.5 Settings</h3>
+          <ul>
+            <li><code>services.msc</code>: Start, stop, and set startup types for services.</li>
+            <li><code>devmgmt.msc</code>: Device Manager (Driver updates, rollbacks, hardware status).</li>
+            <li><code>diskmgmt.msc</code>: Disk Management (Partition, format, extend, shrink).</li>
+            <li><code>compmgmt.msc</code>: Computer Management (Combines MMC snap-ins).</li>
+            <li><code>secpol.msc</code>: Local Security Policy (Password complexity, lockout threshold).</li>
+            <li><code>msconfig</code>: System Configuration (Selective startup, boot options, service toggle).</li>
+            <li><b>UAC Levels:</b> Always notify (strictest), Notify only on app changes (default/dim), Notify without dimming, Never notify.</li>
+            <li><b>Indexing Options:</b> Controls search indexing locations for fast file retrieval.</li>
+          </ul>
+        </div>
+
+        <!-- 1.6 -->
+        <div class="cheat-card">
+          <h3>1.6 macOS Utilities</h3>
+          <ul>
+            <li><b>Finder:</b> Graphical file manager (equivalent to Windows File Explorer).</li>
+            <li><b>Spotlight:</b> System-wide search tool (Cmd + Space).</li>
+            <li><b>Time Machine:</b> Automatic incremental backup system.</li>
+            <li><b>Disk Utility:</b> Format, partition, and run First Aid on drives.</li>
+            <li><b>Force Quit:</b> Force stop unresponsive apps (Cmd + Option + Esc).</li>
+            <li><b>Keychain Access:</b> Password and certificate management vault.</li>
+            <li><b>Activity Monitor:</b> Real-time process resource usage (equivalent to Task Manager).</li>
+          </ul>
+        </div>
+
+        <!-- 1.7 -->
+        <div class="cheat-card">
+          <h3>1.7 Linux CLI Reference</h3>
+          <table>
+            <tr><th>Command</th><th>Function</th></tr>
+            <tr><td><code>chmod</code></td><td>Change permissions (Octal: Read=4, Write=2, Execute=1)</td></tr>
+            <tr><td><code>chown user:group</code></td><td>Change file owner and group ownership</td></tr>
+            <tr><td><code>ps aux</code></td><td>Static snapshot of all running processes for all users</td></tr>
+            <tr><td><code>top</code></td><td>Real-time interactive process/resource monitor</td></tr>
+            <tr><td><code>su</code> vs <code>sudo</code></td><td><code>su</code> = Switch to root session; <code>sudo</code> = Run single command as root</td></tr>
+            <tr><td><code>dd</code></td><td>Raw block-level disk copy/clone tool</td></tr>
+            <tr><td><code>tar -czvf</code></td><td>Create compressed archive file</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERMINAL SIMULATOR TAB -->
+    <div id="terminal" class="tab-content">
+      <div class="quiz-card">
+        <h3>Interactive CLI Challenge</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">
+          Test your memory! Type CLI commands for Windows or Linux. Try commands like <code>sfc /scannow</code>, <code>bootrec /fixmbr</code>, <code>chmod 754 file.txt</code>, <code>ipconfig /flushdns</code>, or <code>ps aux</code>.
+        </p>
+        <div class="terminal">
+          <div class="term-output" id="termOutput">CompTIA Core 2 Interactive Terminal [Version 10.0.2201102]
+Type "help" to see available commands or test any Windows/Linux CLI syntax.
+
+C:\Users\Administrator></div>
+          <div class="term-input-line">
+            <span class="term-prompt">&gt;</span>
+            <input type="text" class="term-input" id="termInput" placeholder="Type command here..." onkeydown="handleTerminal(event)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    /* ====================================
+       DATA: QUIZ QUESTIONS
+       ==================================== */
+    const questions = [
+      {
+        obj: "1.1",
+        q: "A workstation requires 128 GB of RAM and 4 physical CPU sockets to handle video rendering. Which edition of Windows is the MINIMUM requirement to support this hardware configuration?",
+        options: [
+          "Windows 10 Home",
+          "Windows 10 Pro",
+          "Windows 10 Enterprise",
+          "Windows 10 Pro for Workstations"
+        ],
+        answer: 3,
+        explanation: "Windows Pro for Workstations is the only edition that supports up to 4 physical CPUs and up to 6 TB of RAM. Standard Pro and Enterprise only support up to 2 physical CPUs."
+      },
+      {
+        obj: "1.1",
+        q: "A technician needs to protect sensitive files on a shared Windows workstation. The goal is to encrypt individual files in a specific folder without encrypting the entire drive. Which feature should be used?",
+        options: [
+          "BitLocker",
+          "BitLocker To Go",
+          "Encrypting File System (EFS)",
+          "AppLocker"
+        ],
+        answer: 2,
+        explanation: "EFS (Encrypting File System) operates at the file/folder level on NTFS volumes. BitLocker encrypts entire storage volumes/drives."
+      },
+      {
+        obj: "1.1",
+        q: "What is the maximum addressable physical memory limit for a 32-bit edition of Windows?",
+        options: ["2 GB", "4 GB", "16 GB", "128 GB"],
+        answer: 1,
+        explanation: "32-bit architectures are strictly limited to addressing a maximum of 4 GB of RAM due to 2^32 address space constraints."
+      },
+      {
+        obj: "1.2",
+        q: "An administrator needs to deploy Windows to 50 brand-new computers without using USB flash drives. The workstations will boot directly from the local network server. Which technology enables this?",
+        options: ["PXE", "DISM", "Sysprep", "Unattended installation"],
+        answer: 0,
+        explanation: "Preboot Execution Environment (PXE) allows network adapters to boot directly from a deployment server over the network."
+      },
+      {
+        obj: "1.2",
+        q: "A technician is preparing a reference Windows image to deploy across an organization. Which tool MUST be run before capturing the image to remove computer-specific security identifiers (SIDs)?",
+        options: ["DISM", "Sysprep", "autounattend.xml", "Robocopy"],
+        answer: 1,
+        explanation: "Sysprep (System Preparation tool) generalizes the Windows installation by stripping out unique machine information like SIDs and driver bindings before image capture."
+      },
+      {
+        obj: "1.2",
+        q: "A user wants to copy a single 6 GB ISO file onto a 32 GB USB flash drive, but receives an error stating the file is too large for the destination filesystem. What is the most likely cause?",
+        options: [
+          "The flash drive is formatted with exFAT.",
+          "The flash drive is formatted with FAT32.",
+          "The flash drive uses MBR partitioning.",
+          "The flash drive is formatted with NTFS."
+        ],
+        answer: 1,
+        explanation: "FAT32 has a strict maximum individual file size limit of 4 GB. Files larger than 4 GB cannot be stored on FAT32 volumes."
+      },
+      {
+        obj: "1.2",
+        q: "A technician needs to configure a 4 TB storage drive on a Windows server. Which disk partitioning scheme must be selected to allow a single partition larger than 2 TB?",
+        options: ["MBR", "GPT", "FAT32", "CDFS"],
+        answer: 1,
+        explanation: "GPT (GUID Partition Table) supports disk sizes up to 9.4 ZB and up to 128 primary partitions. Legacy MBR is capped at 2 TB per volume."
+      },
+      {
+        obj: "1.3",
+        q: "A system administrator suspects that system files on a Windows PC have been corrupted. Running 'sfc /scannow' failed because the local component store was corrupted. Which command should be executed first to fix the store?",
+        options: [
+          "chkdsk /f /r",
+          "dism /online /cleanup-image /restorehealth",
+          "bootrec /rebuildbcd",
+          "gpupdate /force"
+        ],
+        answer: 1,
+        explanation: "DISM (Deployment Image Servicing and Management) with `/restorehealth` repairs the Windows component store image, allowing `sfc /scannow` to subsequently succeed."
+      },
+      {
+        obj: "1.3",
+        q: "A Windows PC displays 'Invalid partition table' upon boot and fails to load the OS. From the WinRE command prompt, which command rewrites the Master Boot Record without destroying existing partitions?",
+        options: [
+          "bootrec /fixmbr",
+          "bootrec /fixboot",
+          "bootrec /rebuildbcd",
+          "chkdsk /f"
+        ],
+        answer: 0,
+        explanation: "`bootrec /fixmbr` writes a new Master Boot Record to the system partition without touching or corrupting the existing partition table."
+      },
+      {
+        obj: "1.3",
+        q: "A technician suspects a hard drive is developing physical bad sectors and needs to locate them and recover readable data. Which command should be run?",
+        options: ["chkdsk /f", "chkdsk /r", "sfc /scannow", "diskpart"],
+        answer: 1,
+        explanation: "`chkdsk /r` includes the functionality of `/f` (fixing filesystem errors) plus it scans the physical surface for bad sectors and recovers readable information."
+      },
+      {
+        obj: "1.3",
+        q: "A technician wants to view the hop-by-hop network route to a server while simultaneously measuring packet loss statistics for each router along the path. Which command provides this capability?",
+        options: ["tracert", "ping -t", "pathping", "netstat -a"],
+        answer: 2,
+        explanation: "`pathping` combines the functionality of `tracert` and `ping` by sending multiple echo requests to each hop over time to measure latency and packet loss per hop."
+      },
+      {
+        obj: "1.3",
+        q: "An administrator pushes a new security policy in Active Directory and needs to force an immediate refresh of the local Group Policy settings on a Windows workstation. Which command should be used?",
+        options: ["gpresult /r", "gpupdate /force", "secpol.msc", "net use"],
+        answer: 1,
+        explanation: "`gpupdate /force` immediately re-applies all user and computer Group Policies on the local machine."
+      },
+      {
+        obj: "1.4",
+        q: "A technician needs to change the startup type of the Print Spooler service from Automatic to Disabled. Which MMC console snap-in should be launched directly?",
+        options: [
+          "devmgmt.msc",
+          "diskmgmt.msc",
+          "services.msc",
+          "secpol.msc"
+        ],
+        answer: 2,
+        explanation: "`services.msc` directly opens the Services console where background system services can be started, stopped, and configured."
+      },
+      {
+        obj: "1.4",
+        q: "An administrator wants to configure account lockout thresholds and minimum password lengths on a non-domain (standalone) Windows workstation. Which console should be opened?",
+        options: [
+          "secpol.msc",
+          "compmgmt.msc",
+          "msconfig",
+          "eventvwr.msc"
+        ],
+        answer: 0,
+        explanation: "`secpol.msc` opens Local Security Policy, which manages password policies, account lockout policies, and local security rights on standalone machines."
+      },
+      {
+        obj: "1.4",
+        q: "A user complains that an application crashed yesterday. A technician needs to examine the historical system logs to find the error event. Which tool is best suited?",
+        options: [
+          "Resource Monitor",
+          "Performance Monitor",
+          "Event Viewer (eventvwr.msc)",
+          "Task Manager"
+        ],
+        answer: 2,
+        explanation: "Event Viewer (`eventvwr.msc`) records detailed logs for Application, System, and Security events, making it ideal for investigating past crashes."
+      },
+      {
+        obj: "1.5",
+        q: "A technician connects a laptop to a trusted home network and wants to allow file and printer sharing with other home devices. Which network profile setting should be selected?",
+        options: ["Public", "Private", "Domain", "Workgroup"],
+        answer: 1,
+        explanation: "Setting a network profile to 'Private' enables device discovery and allows file and printer sharing across local trusted devices."
+      },
+      {
+        obj: "1.5",
+        q: "An administrator wants to configure UAC to its most secure level, ensuring that the desktop is dimmed and prompts appear whenever programs OR users attempt to make system changes. Which slider setting should be chosen?",
+        options: [
+          "Always notify",
+          "Notify me only when apps try to make changes (default)",
+          "Notify me only when apps try to make changes (do not dim)",
+          "Never notify"
+        ],
+        answer: 0,
+        explanation: "'Always notify' is the highest UAC setting. It triggers a prompt and dims the screen for both app-initiated and user-initiated system changes."
+      },
+      {
+        obj: "1.5",
+        q: "A custom command-line utility needs to be accessible from any directory in the Command Prompt without specifying its full file path. Which system configuration variable needs to be updated?",
+        options: [
+          "Indexing Options",
+          "PATH Environment Variable",
+          "UAC Level",
+          "System Properties > Computer Name"
+        ],
+        answer: 1,
+        explanation: "Adding a directory to the PATH Environment Variable instructs Windows where to search for executable files when a command is run without a full path."
+      },
+      {
+        obj: "1.6",
+        q: "A macOS user needs to view real-time CPU, memory, disk, and energy utilization for running applications. Which macOS tool is equivalent to Windows Task Manager?",
+        options: [
+          "Activity Monitor",
+          "Disk Utility",
+          "Keychain Access",
+          "Spotlight"
+        ],
+        answer: 0,
+        explanation: "Activity Monitor is the macOS utility used to monitor real-time process performance, memory usage, and power consumption."
+      },
+      {
+        obj: "1.6",
+        q: "Which built-in macOS utility provides automatic, incremental system backups to external storage, allowing users to restore previous versions of files or the whole OS?",
+        options: ["Disk Utility", "Time Machine", "Finder", "Keychain Access"],
+        answer: 1,
+        explanation: "Time Machine is the native macOS incremental backup solution that maintains hourly, daily, and weekly backups."
+      },
+      {
+        obj: "1.6",
+        q: "A user's macOS application becomes completely unresponsive and freezes. Which keyboard shortcut opens the window to forcibly stop the app?",
+        options: [
+          "Cmd + Space",
+          "Cmd + Option + Esc",
+          "Ctrl + Alt + Delete",
+          "Cmd + Shift + 4"
+        ],
+        answer: 1,
+        explanation: "`Cmd + Option + Esc` opens the 'Force Quit Applications' dialog on macOS, allowing users to terminate frozen processes."
+      },
+      {
+        obj: "1.7",
+        q: "A Linux administrator needs to grant the owner read, write, and execute permissions; grant the group read and execute permissions; and grant all other users read-only permissions on 'script.sh'. What is the exact octal `chmod` command?",
+        options: [
+          "chmod 754 script.sh",
+          "chmod 751 script.sh",
+          "chmod 644 script.sh",
+          "chmod 777 script.sh"
+        ],
+        answer: 0,
+        explanation: "Owner = rwx (4+2+1=7). Group = r-x (4+0+1=5). Others = r-- (4+0+0=4). Octal value = `754`."
+      },
+      {
+        obj: "1.7",
+        q: "A Linux user wants to change both the owner to 'alice' and the group to 'devs' for a file named 'data.txt' in a single command. Which command is correct?",
+        options: [
+          "chmod alice:devs data.txt",
+          "chown alice:devs data.txt",
+          "chown alice devs data.txt",
+          "sudo usergroup alice:devs data.txt"
+        ],
+        answer: 1,
+        explanation: "`chown owner:group filename` is the standard Linux syntax to change both file owner and group association concurrently."
+      },
+      {
+        obj: "1.7",
+        q: "An administrator needs to switch their active terminal session completely to the `root` account for an extended series of system maintenance tasks. Which command should be used?",
+        options: ["sudo", "su", "ps aux", "chown root"],
+        answer: 1,
+        explanation: "`su` (switch user) changes the active shell session directly to the target account (root by default). `sudo` executes only a single command with root privileges."
+      },
+      {
+        obj: "1.7",
+        q: "Which Linux command displays a static snapshot of all currently running processes across all users on the system?",
+        options: ["top", "ps aux", "kill -9", "grep"],
+        answer: 1,
+        explanation: "`ps aux` produces a static snapshot listing of every process running on the system. `top` provides an interactive, dynamically refreshing real-time monitor."
+      }
+    ];
+
+    /* ====================================
+       DATA: FLASHCARDS
+       ==================================== */
+    const flashcards = [
+      { obj: "1.1", front: "Windows 32-bit vs 64-bit RAM Limits", back: "32-bit: Max 4 GB RAM.\n64-bit: Up to 2 TB (Pro/Ent) or 6 TB (Pro for Workstations)." },
+      { obj: "1.1", front: "BitLocker vs EFS", back: "BitLocker: Encrypts the ENTIRE drive/volume.\nEFS (Encrypting File System): Encrypts INDIVIDUAL files/folders on NTFS." },
+      { obj: "1.1", front: "Domain Join vs Workgroup", back: "Domain: Centralized Active Directory management (Requires Pro or higher).\nWorkgroup: Peer-to-peer network model with local accounts." },
+      { obj: "1.1", front: "Windows Home Edition Limits", back: "Max 128 GB RAM, 1 CPU socket.\nCANNOT join a domain, CANNOT host Remote Desktop (RDP)." },
+      { obj: "1.2", front: "Sysprep Purpose", back: "Generalizes a Windows installation by stripping machine-specific SIDs and hardware info before capturing a disk image." },
+      { obj: "1.2", front: "autounattend.xml", back: "Answer file created with Windows SIM used to perform unattended automated Windows installations." },
+      { obj: "1.2", front: "MBR vs GPT Limits", back: "MBR: Max 2 TB disk size, max 4 primary partitions.\nGPT: Max 9.4 ZB, up to 128 primary partitions (Requires UEFI)." },
+      { obj: "1.2", front: "FAT32 File Size Limit", back: "4 GB maximum single file size limit." },
+      { obj: "1.2", front: "exFAT Filesystem", back: "Designed for flash storage drives. Supports files > 4 GB and works natively across Windows and macOS." },
+      { obj: "1.3", front: "sfc /scannow", back: "System File Checker: Scans and repairs corrupted or missing protected Windows system files." },
+      { obj: "1.3", front: "DISM /RestoreHealth", back: "Repairs damaged Windows component store (WIM/system image) when SFC fails." },
+      { obj: "1.3", front: "chkdsk /f vs /r", back: "/f: Fixes filesystem errors on disk.\n/r: Locates bad physical sectors and recovers readable data (includes /f)." },
+      { obj: "1.3", front: "bootrec Switches", back: "/fixmbr: Repairs Master Boot Record.\n/fixboot: Writes new boot sector.\n/rebuildbcd: Scans disks and rebuilds BCD menu." },
+      { obj: "1.3", front: "pathping", back: "Combines tracert and ping. Measures packet loss and latency at each router hop over time." },
+      { obj: "1.3", front: "robocopy", back: "Robust File Copy: Resumes interrupted copies, mirrors directory trees, preserves ACL permissions." },
+      { obj: "1.3", front: "ipconfig /flushdns", back: "Clears and resets the local DNS resolver cache to purge outdated IP mappings." },
+      { obj: "1.4", front: "services.msc", back: "Services MMC console: Configures, starts, stops, and disables background Windows services." },
+      { obj: "1.4", front: "devmgmt.msc", back: "Device Manager: Updates, rolls back, or disables hardware device drivers." },
+      { obj: "1.4", front: "secpol.msc", back: "Local Security Policy: Manages account lockout thresholds, password complexity, and local rights." },
+      { obj: "1.4", front: "msconfig", back: "System Configuration: Configures selective startup modes, boot options, and service toggles." },
+      { obj: "1.5", front: "UAC 'Always Notify' Level", back: "Strictest UAC setting. Dims desktop and prompts for BOTH app changes and user changes." },
+      { obj: "1.5", front: "Indexing Options", back: "Controls which folders are indexed by Windows Search to ensure fast file search results." },
+      { obj: "1.5", front: "PATH Environment Variable", back: "Defines directory paths where executable files reside so they can be run from any CLI path." },
+      { obj: "1.6", front: "Activity Monitor (macOS)", back: "Real-time process, CPU, RAM, and energy performance monitor (macOS Task Manager)." },
+      { obj: "1.6", front: "Time Machine (macOS)", back: "Native macOS automatic incremental file and system backup utility." },
+      { obj: "1.6", front: "Spotlight (macOS)", back: "Universal search bar tool accessed via Cmd + Space." },
+      { obj: "1.7", front: "chmod Octal Calculation", back: "Read=4, Write=2, Execute=1.\nExample: 754 = Owner rwx(7), Group r-x(5), Others r--(4)." },
+      { obj: "1.7", front: "chown Syntax", back: "chown user:group filename\nChanges both file owner and group association in Linux." },
+      { obj: "1.7", front: "su vs sudo", back: "su: Switches terminal session to root.\nsudo: Executes a single command with root privileges." },
+      { obj: "1.7", front: "ps aux vs top", back: "ps aux: Static snapshot of all running processes.\ntop: Real-time refreshing interactive process monitor." }
+    ];
+
+    /* ====================================
+       TAB SWITCHING LOGIC
+       ==================================== */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    /* ====================================
+       QUIZ ENGINE LOGIC
+       ==================================== */
+    let filteredQuestions = [...questions];
+    let correctCount = 0;
+    let attemptedCount = 0;
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+
+      filteredQuestions.forEach((item, index) => {
+        const qCard = document.createElement('div');
+        qCard.className = 'quiz-card';
+        qCard.innerHTML = `
+          <div style="font-size:0.8rem; color:var(--amber); font-weight:700; margin-bottom:0.5rem;">
+            OBJECTIVE ${item.obj}
+          </div>
+          <div class="quiz-question">Q${index + 1}. ${item.q}</div>
+          <div class="quiz-options">
+            ${item.options.map((opt, optIdx) => `
+              <button class="option-btn" onclick="checkAnswer(${index},${optIdx}, this)">
+                ${String.fromCharCode(65 + optIdx)}.${opt}
+              </button>
+            `).join('')}
+          </div>
+          <div class="quiz-explanation" id="expl-${index}">
+            <strong>Explanation:</strong> ${item.explanation}
+          </div>
+        `;
+        container.appendChild(qCard);
+      });
+    }
+
+    function checkAnswer(qIdx, selectedOptIdx, btnElem) {
+      const q = filteredQuestions[qIdx];
+      const parent = btnElem.parentElement;
+      const buttons = parent.querySelectorAll('.option-btn');
+      const explBox = document.getElementById(`expl-${qIdx}`);
+
+      buttons.forEach(b => b.style.pointerEvents = 'none');
+      attemptedCount++;
+
+      if (selectedOptIdx === q.answer) {
+        btnElem.classList.add('correct');
+        correctCount++;
+      } else {
+        btnElem.classList.add('incorrect');
+        buttons[q.answer].classList.add('correct');
+      }
+
+      explBox.classList.add('show');
+      updateScoreBanner();
+    }
+
+    function updateScoreBanner() {
+      document.getElementById('correctCount').innerText = correctCount;
+      document.getElementById('totalAttempted').innerText = attemptedCount;
+      const pct = attemptedCount === 0 ? 0 : Math.round((correctCount / attemptedCount) * 100);
+      document.getElementById('scorePct').innerText = `${pct}%`;
+    }
+
+    function filterQuiz() {
+      const val = document.getElementById('quizFilter').value;
+      if (val === 'all') {
+        filteredQuestions = [...questions];
+      } else {
+        filteredQuestions = questions.filter(q => q.obj === val);
+      }
+      resetQuiz();
+    }
+
+    function resetQuiz() {
+      correctCount = 0;
+      attemptedCount = 0;
+      updateScoreBanner();
+      renderQuiz();
+    }
+
+    /* ====================================
+       FLASHCARD ENGINE LOGIC
+       ==================================== */
+    let filteredCards = [...flashcards];
+    let currentCardIdx = 0;
+
+    function renderCard() {
+      if (filteredCards.length === 0) return;
+      const card = filteredCards[currentCardIdx];
+      document.getElementById('cardTag').innerText = `OBJ ${card.obj}`;
+      document.getElementById('cardFrontText').innerText = card.front;
+      document.getElementById('cardBackTag').innerText = `OBJ ${card.obj} - ANSWER`;
+      document.getElementById('cardBackText').innerText = card.back;
+      document.getElementById('fcProgress').innerText = `Card ${currentCardIdx + 1} of ${filteredCards.length}`;
+      
+      document.getElementById('card').classList.remove('flipped');
+    }
+
+    function flipCard() {
+      document.getElementById('card').classList.toggle('flipped');
+    }
+
+    function nextCard() {
+      if (currentCardIdx < filteredCards.length - 1) {
+        currentCardIdx++;
+        renderCard();
+      }
+    }
+
+    function prevCard() {
+      if (currentCardIdx > 0) {
+        currentCardIdx--;
+        renderCard();
+      }
+    }
+
+    function filterFlashcards() {
+      const val = document.getElementById('fcFilter').value;
+      if (val === 'all') {
+        filteredCards = [...flashcards];
+      } else {
+        filteredCards = flashcards.filter(c => c.obj === val);
+      }
+      currentCardIdx = 0;
+      renderCard();
+    }
+
+    /* ====================================
+       TERMINAL SIMULATOR LOGIC
+       ==================================== */
+    function handleTerminal(e) {
+      if (e.key === 'Enter') {
+        const inputElem = document.getElementById('termInput');
+        const cmd = inputElem.value.trim();
+        const outputElem = document.getElementById('termOutput');
+
+        if (!cmd) return;
+
+        let response = "";
+        const lower = cmd.toLowerCase();
+
+        if (lower === 'help') {
+          response = `Available test commands:
+- sfc /scannow
+- dism /online /cleanup-image /restorehealth
+- chkdsk /f /r
+- bootrec /fixmbr
+- bootrec /fixboot
+- bootrec /rebuildbcd
+- ipconfig /flushdns
+- pathping
+- chmod 754 [file]
+- ps aux
+- clear`;
+        } else if (lower === 'clear') {
+          outputElem.innerText = `C:\\Users\\Administrator>`;
+          inputElem.value = '';
+          return;
+        } else if (lower.includes('sfc /scannow')) {
+          response = `Beginning system scan. This process will take some time...\nSystem repair requested. Protected system files verified. Corrupted files repaired successfully.`;
+        } else if (lower.includes('dism') && lower.includes('restorehealth')) {
+          response = `Deployment Image Servicing and Management tool\n[==========================100.0%==========================]\nThe restore operation completed successfully. Component store repaired.`;
+        } else if (lower.includes('chkdsk')) {
+          response = `The type of the file system is NTFS.\nExamining 563200 file record segments...\nScanning bad physical clusters and sectors... 0 bad sectors found.`;
+        } else if (lower.includes('bootrec /fixmbr')) {
+          response = `Scanning system disk for MBR...\nThe operation completed successfully. Master Boot Record rewritten.`;
+        } else if (lower.includes('ipconfig /flushdns')) {
+          response = `Windows IP Configuration\nSuccessfully flushed the DNS Resolver Cache.`;
+        } else if (lower.includes('chmod')) {
+          response = `Permissions updated successfully.\nOwner: rwx | Group: r-x | Others: r--`;
+        } else if (lower.includes('ps aux')) {
+          response = `USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.1 168244  9632 ?        Ss   08:00   0:01 /sbin/init
+admin     1042  0.2  0.5 452100 32100 pts/0    S+   08:15   0:00 /bin/bash`;
+        } else {
+          response = `'${cmd}' is recognized as a valid CompTIA CLI objective term. Execution simulated successfully.`;
+        }
+
+        outputElem.innerText += `\nC:\\Users\\Administrator> ${cmd}\n${response}\n`;
+        inputElem.value = '';
+        outputElem.scrollTop = outputElem.scrollHeight;
+      }
+    }
+
+    // Initialize App
+    renderQuiz();
+    renderCard();
+  </script>
+</body>
+</html>
