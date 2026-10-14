@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CompTIA A+ Core 2 (220-1102) - Domain 2.0 Security Mastery Suite</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-border: #334155;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --green: #22c55e;
+      --green-bg: rgba(34, 197, 94, 0.15);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.15);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.15);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    header {
+      background-color: var(--panel);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      background: #111827;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--panel-border);
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: var(--panel);
+      color: var(--text-muted);
+      border: 1px solid var(--panel-border);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    .nav-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Flashcards */
+    .fc-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    select {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--panel-border);
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    .flashcard-container {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 650px;
+      height: 380px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .flashcard.flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      background: var(--panel);
+      border: 2px solid var(--panel-border);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      border-color: var(--accent);
+      overflow-y: auto;
+    }
+
+    .card-tag {
+      align-self: flex-start;
+      background: var(--amber-bg);
+      color: var(--amber);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .card-text {
+      font-size: 1.15rem;
+      font-weight: 500;
+      text-align: center;
+      margin: 1rem 0;
+      white-space: pre-line;
+    }
+
+    .card-prompt {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .fc-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-secondary { background: var(--panel-border); color: var(--text); }
+
+    /* Quiz */
+    .quiz-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .quiz-question {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .option-btn {
+      background: #111827;
+      color: var(--text);
+      border: 1px solid var(--panel-border);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      border-color: var(--accent);
+      background: #1f2937;
+    }
+
+    .option-btn.correct {
+      background: var(--green-bg);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .option-btn.incorrect {
+      background: var(--red-bg);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .quiz-explanation {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      background: #0f172a;
+      border-left: 4px solid var(--accent);
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    .quiz-explanation.show { display: block; }
+
+    /* Cheat Sheet */
+    .cheat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .cheat-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+
+    .cheat-card h3 {
+      color: var(--accent);
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    ul { padding-left: 1.25rem; font-size: 0.9rem; }
+    li { margin-bottom: 0.5rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    th, td {
+      border: 1px solid var(--panel-border);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background: #111827;
+      color: var(--accent);
+    }
+
+    .score-banner {
+      background: var(--panel);
+      border: 1px solid var(--accent);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>CompTIA A+ Core 2 (220-1102)</h1>
+    <p>Domain 2.0: Security Mastery Suite (Objectives 2.1 – 2.7)</p>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="switchTab('quiz')">Exam Practice Quiz</button>
+    <button class="nav-btn" onclick="switchTab('flashcards')">Interactive Flashcards</button>
+    <button class="nav-btn" onclick="switchTab('cheatsheet')">Objective Cheat Sheets</button>
+  </nav>
+
+  <main>
+    <!-- QUIZ TAB -->
+    <div id="quiz" class="tab-content active">
+      <div class="score-banner" id="quizScore">
+        Score: <span id="correctCount">0</span> / <span id="totalAttempted">0</span> (<span id="scorePct">0%</span>)
+      </div>
+
+      <div class="fc-controls">
+        <select id="quizFilter" onchange="filterQuiz()">
+          <option value="all">All Security Sub-Objectives (2.1 - 2.7)</option>
+          <option value="2.1">2.1 Security Measures & Purposes</option>
+          <option value="2.2">2.2 Wireless Security Protocols</option>
+          <option value="2.3">2.3 Malware Detection & Removal</option>
+          <option value="2.4">2.4 Social Engineering & Threats</option>
+          <option value="2.5">2.5 Workstation & Device Security</option>
+          <option value="2.6">2.6 SOHO Security Settings</option>
+          <option value="2.7">2.7 Browser Security</option>
+        </select>
+        <button class="btn btn-secondary" onclick="resetQuiz()">Reset Quiz</button>
+      </div>
+
+      <div id="quizContainer"></div>
+    </div>
+
+    <!-- FLASHCARDS TAB -->
+    <div id="flashcards" class="tab-content">
+      <div class="fc-controls">
+        <select id="fcFilter" onchange="filterFlashcards()">
+          <option value="all">All Domain 2 Cards</option>
+          <option value="2.1">2.1 Security Measures</option>
+          <option value="2.2">2.2 Wireless Security</option>
+          <option value="2.3">2.3 Malware Removal (7 Steps)</option>
+          <option value="2.4">2.4 Social Engineering & Threats</option>
+          <option value="2.5">2.5 Workstation & Device Security</option>
+          <option value="2.6">2.6 SOHO Security</option>
+          <option value="2.7">2.7 Browser Security</option>
+        </select>
+        <div id="fcProgress">Card 1 of 0</div>
+      </div>
+
+      <div class="flashcard-container">
+        <div class="flashcard" id="card" onclick="flipCard()">
+          <div class="card-face card-front">
+            <span class="card-tag" id="cardTag">Tag</span>
+            <div class="card-text" id="cardFrontText">Front Text</div>
+            <div class="card-prompt">Click to reveal answer</div>
+          </div>
+          <div class="card-face card-back">
+            <span class="card-tag" id="cardBackTag">Answer</span>
+            <div class="card-text" id="cardBackText">Back Text</div>
+            <div class="card-prompt">Click to flip back</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fc-buttons">
+        <button class="btn btn-secondary" onclick="prevCard()">Previous</button>
+        <button class="btn btn-primary" onclick="flipCard()">Flip</button>
+        <button class="btn btn-secondary" onclick="nextCard()">Next</button>
+      </div>
+    </div>
+
+    <!-- CHEAT SHEET TAB -->
+    <div id="cheatsheet" class="tab-content">
+      <div class="cheat-grid">
+        <div class="cheat-card">
+          <h3>2.1 Security Measures & Purposes</h3>
+          <ul>
+            <li><b>Physical Security:</b> Access control vestibules (mantraps), badge readers, biometric scanners, CCTV, motion sensors, bollards, cable locks.</li>
+            <li><b>Logical Security:</b> Principle of Least Privilege, Access Control Lists (ACLs), Multi-Factor Authentication (MFA / OTP).</li>
+            <li><b>Management Tools:</b> Active Directory (Group Policy, OUs, login scripts, folder redirection), MDM (Mobile Device Management).</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h3>2.2 Wireless Security Protocols</h3>
+          <table>
+            <tr><th>Protocol</th><th>Encryption</th><th>Status</th></tr>
+            <tr><td>WPA2</td><td>AES (CCMP)</td><td>Standard / Secure</td></tr>
+            <tr><td>WPA3</td><td>AES-GCM-256</td><td>Most Secure / Modern</td></tr>
+            <tr><td>TKIP</td><td>RC4 (Legacy)</td><td>Deprecated / Weak</td></tr>
+          </table>
+        </div>
+        <div class="cheat-card">
+          <h3>2.3 Malware 7-Step Removal Procedure</h3>
+          <ol style="padding-left:1.25rem; font-size:0.85rem;">
+            <li><b>Identify and investigate</b> symptoms.</li>
+            <li><b>Quarantine</b> infected system.</li>
+            <li><b>Disable System Restore</b>.</li>
+            <li><b>Remediate / Update</b> anti-malware software.</li>
+            <li><b>Scan and remove</b> infection (Safe Mode).</li>
+            <li><b>Enable System Restore</b> & create new point.</li>
+            <li><b>Educate the end user</b>.</li>
+          </ol>
+        </div>
+        <div class="cheat-card">
+          <h3>2.4 Social Engineering & Threats</h3>
+          <ul>
+            <li><b>Phishing / Vishing / Whaling:</b> Deceptive emails, phone calls, or targeted executive attacks.</li>
+            <li><b>Tailgating / Impersonation:</b> Following someone through a door; posing as tech support.</li>
+            <li><b>Evil Twin:</b> Rogue wireless AP intercepting traffic.</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h3>2.5 & 2.6 Workstation & SOHO Security</h3>
+          <ul>
+            <li><b>Data Encryption:</b> BitLocker (Windows), FileVault (macOS).</li>
+            <li><b>SOHO Router Config:</b> Change default credentials, disable SSID broadcast, enable MAC filtering, configure port forwarding.</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h3>2.7 Browser Security</h3>
+          <ul>
+            <li><b>Certificates:</b> Verify valid SSL/TLS certificates and HTTPS.</li>
+            <li><b>Extensions & Privacy:</b> Restrict browser extensions to trusted stores, clear cache/cookies regularly.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        obj: "2.1",
+        q: "A high-security datacenter wants to implement a physical entry control mechanism featuring two interlocking doors where the first door must close completely before the second door can open, preventing tailgating. What is this called?",
+        options: ["Bollard", "Access control vestibule (mantrap)", "Biometric scanner", "CCTV motion sensor"],
+        answer: 1,
+        explanation: "An access control vestibule (mantrap) uses interlocking doors to physically contain individuals and prevent tailgating."
+      },
+      {
+        obj: "2.2",
+        q: "A network administrator is configuring a secure corporate wireless network. Which wireless encryption standard provides the highest level of security by utilizing AES and replacing legacy TKIP?",
+        options: ["WEP", "WPA with TKIP", "WPA2 or WPA3 with AES", "Open authentication"],
+        answer: 2,
+        explanation: "WPA2 and WPA3 utilize robust AES encryption, making them secure industry standards."
+      },
+      {
+        obj: "2.3",
+        q: "A technician has identified a ransomware infection on a corporate workstation. After isolating the computer, what is the IMMEDIATE next step in CompTIA's official malware removal procedure?",
+        options: ["Update anti-malware definitions", "Disable System Restore in Windows", "Schedule automated system scans", "Educate the end user"],
+        answer: 1,
+        explanation: "Step 3 of CompTIA's 7-step malware removal procedure is to disable System Restore so malware cannot infect existing restore points."
+      },
+      {
+        obj: "2.4",
+        q: "An employee receives a fraudulent phone call from someone pretending to be the IT helpdesk manager, urgently asking for login credentials. What attack vector is this?",
+        options: ["Phishing", "Vishing", "Whaling", "Dumpster diving"],
+        answer: 1,
+        explanation: "Vishing (Voice Phishing) is social engineering conducted over telephone or VoIP systems."
+      },
+      {
+        obj: "2.5",
+        q: "A company wants to ensure corporate laptop hard drives are fully encrypted to protect data if a device is stolen. Which built-in Windows feature should be enabled on Pro editions?",
+        options: ["EFS", "BitLocker", "UAC", "Defender Firewall"],
+        answer: 1,
+        explanation: "BitLocker provides full-disk volume encryption on Windows Pro and Enterprise editions."
+      },
+      {
+        obj: "2.6",
+        q: "A technician is setting up a new SOHO wireless router. Which initial configuration step is critical for basic security?",
+        options: ["Changing the default administrator username and password", "Enabling DMZ host forwarding", "Setting wireless channel to Auto", "Disabling DHCP server"],
+        answer: 0,
+        explanation: "Default router administrator credentials are widely known and must always be changed immediately."
+      },
+      {
+        obj: "2.7",
+        q: "A user visits a banking website and notices a browser warning indicating that the SSL/TLS certificate is invalid or expired. What security risk does this represent?",
+        options: ["Malware infection via USB", "Potential Man-in-the-Middle (MitM) or spoofed phishing site", "Weak wireless encryption", "Expired Windows activation"],
+        answer: 1,
+        explanation: "Invalid certificates indicate server identity cannot be verified, exposing the connection to interception."
+      }
+    ];
+
+    const flashcards = [
+      { obj: "2.1", front: "Access Control Vestibule (Mantrap)", back: "Two interlocking physical doors where one closes before the other opens. Prevents tailgating." },
+      { obj: "2.1", front: "Principle of Least Privilege", back: "Users/systems should only be given the minimum necessary rights required for their tasks." },
+      { obj: "2.2", front: "WPA2 vs WPA3", back: "WPA2 uses AES; WPA3 uses enhanced AES-GCM-256 and forward secrecy." },
+      { obj: "2.3", front: "Malware 7-Step Procedure", back: "1. Identify symptoms\n2. Quarantine system\n3. Disable System Restore\n4. Update anti-malware\n5. Scan & remove (Safe Mode)\n6. Enable System Restore\n7. Educate user" },
+      { obj: "2.4", front: "Phishing vs Vishing vs Whaling", back: "Phishing = Email\nVishing = Phone call\nWhaling = Targeted high-profile executives" },
+      { obj: "2.5", front: "BitLocker vs FileVault", back: "BitLocker = Windows full-disk encryption.\nFileVault = macOS full-disk encryption." },
+      { obj: "2.6", front: "SOHO Router Security", back: "Change default admin password, update firmware, disable remote management, use WPA3/WPA2." }
+    ];
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    let filteredQuestions = [...questions];
+    let correctCount = 0;
+    let attemptedCount = 0;
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+      filteredQuestions.forEach((item, index) => {
+        const qCard = document.createElement('div');
+        qCard.className = 'quiz-card';
+        qCard.innerHTML = `
+          <div style="font-size:0.8rem; color:var(--amber); font-weight:700; margin-bottom:0.5rem;">OBJECTIVE ${item.obj}</div>
+          <div class="quiz-question">Q${index + 1}. ${item.q}</div>
+          <div class="quiz-options">
+            ${item.options.map((opt, optIdx) => `<button class="option-btn" onclick="checkAnswer(${index},${optIdx}, this)">${String.fromCharCode(65 + optIdx)}.${opt}</button>`).join('')}
+          </div>
+          <div class="quiz-explanation" id="expl-${index}"><strong>Explanation:</strong> ${item.explanation}</div>
+        `;
+        container.appendChild(qCard);
+      });
+    }
+
+    function checkAnswer(qIdx, selectedOptIdx, btnElem) {
+      const q = filteredQuestions[qIdx];
+      const parent = btnElem.parentElement;
+      const buttons = parent.querySelectorAll('.option-btn');
+      const explBox = document.getElementById(`expl-${qIdx}`);
+      buttons.forEach(b => b.style.pointerEvents = 'none');
+      attemptedCount++;
+      if (selectedOptIdx === q.answer) {
+        btnElem.classList.add('correct');
+        correctCount++;
+      } else {
+        btnElem.classList.add('incorrect');
+        buttons[q.answer].classList.add('correct');
+      }
+      explBox.classList.add('show');
+      updateScoreBanner();
+    }
+
+    function updateScoreBanner() {
+      document.getElementById('correctCount').innerText = correctCount;
+      document.getElementById('totalAttempted').innerText = attemptedCount;
+      const pct = attemptedCount === 0 ? 0 : Math.round((correctCount / attemptedCount) * 100);
+      document.getElementById('scorePct').innerText = `${pct}%`;
+    }
+
+    function filterQuiz() {
+      const val = document.getElementById('quizFilter').value;
+      filteredQuestions = val === 'all' ? [...questions] : questions.filter(q => q.obj === val);
+      resetQuiz();
+    }
+
+    function resetQuiz() {
+      correctCount = 0;
+      attemptedCount = 0;
+      updateScoreBanner();
+      renderQuiz();
+    }
+
+    let filteredCards = [...flashcards];
+    let currentCardIdx = 0;
+
+    function renderCard() {
+      if (filteredCards.length === 0) return;
+      const card = filteredCards[currentCardIdx];
+      document.getElementById('cardTag').innerText = `OBJ ${card.obj}`;
+      document.getElementById('cardFrontText').innerText = card.front;
+      document.getElementById('cardBackTag').innerText = `OBJ ${card.obj} - ANSWER`;
+      document.getElementById('cardBackText').innerText = card.back;
+      document.getElementById('fcProgress').innerText = `Card ${currentCardIdx + 1} of ${filteredCards.length}`;
+      document.getElementById('card').classList.remove('flipped');
+    }
+
+    function flipCard() { document.getElementById('card').classList.toggle('flipped'); }
+    function nextCard() { if (currentCardIdx < filteredCards.length - 1) { currentCardIdx++; renderCard(); } }
+    function prevCard() { if (currentCardIdx > 0) { currentCardIdx--; renderCard(); } }
+
+    function filterFlashcards() {
+      const val = document.getElementById('fcFilter').value;
+      filteredCards = val === 'all' ? [...flashcards] : flashcards.filter(c => c.obj === val);
+      currentCardIdx = 0;
+      renderCard();
+    }
+
+    renderQuiz();
+    renderCard();
+  </script>
+</body>
+</html>
