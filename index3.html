@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A+ Core 2 — Objective 1.0 Operating Systems</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f4ef;--fg:#1d2330;--card:#fff;--line:#d9d5ca;--dim:#667085;--acc:#b36b00;--good:#1f8a4c;--bad:#c0392b}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161d;--fg:#eee9df;--card:#1b212b;--line:#2b3342;--dim:#9aa3b2;--acc:#e8a33d;--good:#5fbf7a;--bad:#e0685c}}
+:root[data-theme="dark"]{--bg:#12161d;--fg:#eee9df;--card:#1b212b;--line:#2b3342;--dim:#9aa3b2;--acc:#e8a33d;--good:#5fbf7a;--bad:#e0685c}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:20px 14px 50px}
+h1{font-size:20px;margin:0 0 2px}.sub{color:var(--dim);font-size:13px;margin-bottom:14px}
+h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);margin:22px 0 6px}
+select,button{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+select{width:100%;margin-bottom:10px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button{flex:1;cursor:pointer}.tabs .on{border-color:var(--acc);color:var(--acc);font-weight:600}
+#sc{font-family:ui-monospace,monospace;color:var(--dim);font-size:13px;margin:4px 0 10px}
+.row{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:6px;display:flex;flex-direction:column;gap:2px}
+.row b{font-family:ui-monospace,monospace;font-size:13.5px}.row span{color:var(--dim);font-size:13.5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.card small{color:var(--acc);font-family:ui-monospace,monospace}.card p{margin:6px 0}.q{font-weight:600;margin-bottom:14px!important}
+.opt,.go{display:block;width:100%;text-align:left;margin-top:8px;cursor:pointer;font-family:ui-monospace,monospace;font-size:13.5px}
+.go{text-align:center;color:var(--acc);border-color:var(--acc)}
+.good{border-color:var(--good)!important;color:var(--good)}.bad{border-color:var(--bad)!important;color:var(--bad)}
+.mt{display:grid;grid-template-columns:1fr 1.4fr;gap:8px}.mt>div{display:flex;flex-direction:column;gap:8px}
+.m{text-align:left;cursor:pointer;font-size:12.5px}.m.on{border-color:var(--acc)}.m.done{border-color:var(--good);color:var(--good);opacity:.55}
+</style></head><body><main>
+<h1>Core 2 — 1.0 Operating Systems</h1>
+<div class="sub">220-1102 · all 11 sub-objectives · Windows 10/11, macOS, Linux</div>
+<select id="cat"></select>
+<div class="tabs"><button data-m="study" class="on">Study</button><button data-m="quiz">MCQ</button><button data-m="match">Matching</button></div>
+<div id="sc"></div><div id="v"></div></main>
+<script>
+const T={"1.1":"Windows editions & features","1.2":"Command-line tools","1.3":"Windows tools & MMC","1.4":"Control Panel utilities","1.5":"Windows Settings","1.6":"Windows networking","1.7":"Application installation","1.8":"OS types & file systems","1.9":"OS installs & upgrades","1.10":"macOS","1.11":"Linux"};
+const R={
+"1.1":`Home|1 CPU, 128 GB RAM max; no domain join, no RDP host, no BitLocker, no gpedit
+Pro|2 CPUs, 2 TB RAM; domain join, RDP host, BitLocker, gpedit
+Pro for Workstations|4 CPUs, 6 TB RAM; adds ReFS and persistent memory
+Enterprise|Pro plus AppLocker, Credential Guard, DirectAccess; volume licensing
+Domain vs workgroup|Domain = central logins via Active Directory (Pro and up); workgroup = peer-to-peer, local accounts
+RDP|Remote Desktop host needs Pro or higher; Home can only be a client
+BitLocker|Full-disk encryption, Pro and up
+gpedit.msc|Local Group Policy Editor; not on Home
+32-bit vs 64-bit RAM|32-bit addresses 4 GB max; 64-bit far more (the edition sets the cap)
+In-place upgrade|Upgrade path that keeps files, apps and settings`,
+"1.2":`cd|Change directory
+dir|List folder contents
+md|Make a directory
+rmdir|Remove a directory (/s removes contents too)
+D:|Type a drive letter to switch drives
+ipconfig|Show IP config; /all full detail, /release and /renew DHCP, /flushdns clears DNS cache
+ping|ICMP echo test of connectivity; -t runs continuously
+hostname|Show the computer name
+netstat|Active connections and listening ports; -an numeric, -b shows the process
+nslookup|Query DNS for name to IP
+chkdsk|Check a disk; /f fixes errors, /r finds bad sectors
+net user|Manage local accounts
+net use|Map a network drive to a letter
+tracert|Hop-by-hop path to a destination
+format|Format a volume with a file system
+xcopy|Copy files and folders with more options than copy
+copy|Copy single files
+robocopy|Robust copy; mirrors, resumes, keeps permissions
+gpupdate|Refresh Group Policy; /force reapplies everything
+gpresult|Show applied policies; /r summary
+shutdown|Shut down or restart; /s /r /t
+sfc|System File Checker; /scannow repairs system files
+[command] /?|Help for any command
+diskpart|CLI partition manager (list disk, select, clean, create)
+pathping|tracert plus per-hop packet loss stats
+winver|Show the Windows version and build`,
+"1.3":`Task Manager|Tabs: Processes, Performance, Users, Startup, Services; end tasks
+Startup tab|Enable or disable programs that launch at boot
+Event Viewer (eventvwr.msc)|Application, System and Security logs
+Disk Management (diskmgmt.msc)|Partition, format, extend, assign drive letters
+Task Scheduler (taskschd.msc)|Run tasks at set times or events
+Device Manager (devmgmt.msc)|Update, roll back or disable drivers
+Certificate Manager (certmgr.msc)|View and manage certificates
+Local Users and Groups (lusrmgr.msc)|Local accounts and groups; not on Home
+Performance Monitor (perfmon.msc)|Long-term counters and data collector sets
+Group Policy Editor (gpedit.msc)|Local policy settings; not on Home
+Services (services.msc)|Start, stop, set startup type of services
+System Information (msinfo32)|Hardware, driver and OS inventory
+Resource Monitor (resmon)|Live per-process CPU, memory, disk and network detail
+System Configuration (msconfig)|Boot options, safe boot, services
+Disk Cleanup (cleanmgr)|Remove temp files, recycle bin, old updates
+Disk Defragment (dfrgui)|Defragment HDDs; SSDs get TRIM instead
+Registry Editor (regedit)|Edit the registry; back up first
+MMC|Console that hosts snap-ins like the .msc tools`,
+"1.4":`Internet Options|Browser settings: security zones, proxy, privacy, advanced
+Devices and Printers|Add and manage printers and peripherals
+Programs and Features|Uninstall or repair apps; turn Windows features on or off
+Network and Sharing Center|Network status, adapter settings, sharing options
+System|Computer info, remote settings, advanced, system protection
+Windows Defender Firewall|Allow apps, inbound and outbound rules, on or off
+Mail|Outlook profiles and mail accounts
+Sound|Playback and recording devices
+User Accounts|Change account type, passwords, credentials
+Device Manager|Hardware and driver management
+Indexing Options|Which locations Windows Search indexes
+Administrative Tools|Shortcuts to MMC snap-ins and admin utilities
+File Explorer Options|Show hidden files, hide extensions, view options
+Power Options|Power plans, sleep, hibernate, lid action, fast startup, USB selective suspend
+Hibernate|Saves RAM to disk and powers off; sleep keeps RAM powered
+Ease of Access|Magnifier, narrator, high contrast, sticky keys`,
+"1.5":`Time and Language|Date, time zone, region, language
+Update and Security|Windows Update, recovery, Defender, backup
+Personalization|Background, themes, lock screen, taskbar
+Apps|Installed apps, defaults, startup apps
+Privacy|App permissions such as camera, mic, location
+System|Display, sound, notifications, power, storage, About
+Devices|Bluetooth, printers, mouse, USB
+Network and Internet|Wi-Fi, Ethernet, VPN, proxy, data usage
+Gaming|Game Bar, captures, Game Mode
+Accounts|Sign-in options, Microsoft vs local account`,
+"1.6":`Workgroup setup|Peer-to-peer; each PC keeps its own local accounts
+Domain setup|Join via System Properties; Active Directory handles logins and policy
+Shared resources|Files, printers and file servers shared over SMB
+Mapped drives|Network share mapped to a drive letter
+Network paths|File Explorer UNC format \\\\server\\share
+Local OS firewall|Allow or block apps and ports; exceptions per profile
+Client IP settings|IP address, subnet mask, gateway, DNS
+Static vs dynamic|Static = manual fixed IP; dynamic = DHCP lease
+APIPA|169.254.x.x self-assigned address when DHCP fails
+VPN|Encrypted tunnel to a remote network
+WWAN|Cellular wide-area connection
+Proxy settings|Route web traffic through a proxy server
+Public vs private network|Public hides the PC and limits sharing; private allows discovery
+Metered connection|Limits background data and updates`,
+"1.7":`32-bit vs 64-bit apps|64-bit apps need a 64-bit OS; 32-bit apps run on both
+Dedicated vs integrated GPU|Dedicated has its own VRAM; integrated shares system RAM
+VRAM requirement|Video memory an app needs for graphics work
+RAM requirement|Minimum memory for the app to run
+CPU requirement|Minimum speed, cores, instruction set
+External hardware token|USB dongle needed to run or license an app
+Storage requirement|Free disk space for install and data
+Distribution methods|Physical media or download; ISO files can be mounted
+Impact considerations|Device, network, operation and business (bandwidth, downtime)`,
+"1.8":`Workstation OSs|Windows, Linux, macOS, Chrome OS
+Chrome OS|Browser-based OS on Chromebooks
+Mobile OSs|iPadOS, iOS, Android
+NTFS|Windows default; permissions, encryption, journaling
+FAT32|4 GB file limit; wide compatibility
+exFAT|Large files, flash drives, cross-platform
+ext3|Older Linux journaling file system
+ext4|Current Linux default file system
+APFS|Apple file system for modern macOS and iOS
+EOL|End-of-life: no more security updates
+Update limitations|Older OSs may lose feature updates and hardware support
+Compatibility concerns|Apps, drivers and file formats differ between OSs`,
+"1.9":`USB boot|Common modern install media
+Optical boot|DVD install; slower
+Network boot|PXE install from a server
+Internet-based boot|Cloud download for install or recovery
+External drive boot|Hot-swappable drive used as boot source
+Internal partition boot|Installer started from another partition
+Clean install|Wipes the drive for a fresh OS
+Upgrade|Installs over the existing OS and keeps data
+Recovery partition|Factory restore from a hidden partition
+Image deployment|Clone a master image to many PCs
+Repair installation|Reinstalls OS files, keeps data and apps
+Remote network installation|Deployed over the network, often unattended
+GPT|GUID Partition Table; UEFI, over 2 TB, 128 partitions
+MBR|Legacy BIOS; 2 TB max, 4 primary partitions
+Drive format|Choose the file system (NTFS, exFAT...) after partitioning
+Third-party drivers|Load storage drivers during setup if the disk isn’t seen
+Upgrade considerations|Back up files, check app, driver and hardware compatibility
+Feature updates|Major OS releases tied to the product life cycle`,
+"1.10":`.dmg|Disk image; drag the app to Applications
+.pkg|Installer package with a wizard
+.app|Application bundle; drag to Trash to uninstall
+App Store|Official app source
+Apple ID|Account for App Store and iCloud; corporate limits via MDM
+Time Machine|Automatic backups to an external drive
+System Preferences|Displays, Network, Printers, Privacy, Accessibility
+Multiple desktops|Separate Spaces for window layouts
+Mission Control|Overview of windows and desktops
+Keychain|Stores passwords and certificates
+Spotlight|Search with Cmd+Space
+iCloud|Apple sync and backup service
+Gestures|Trackpad swipes and pinches
+Finder|File manager
+Remote Disc|Borrow another computer’s optical drive
+Dock|App launcher bar
+Disk Utility|Format, partition, First Aid repair
+FileVault|Full-disk encryption
+Terminal|Unix shell
+Force Quit|Cmd+Option+Esc closes frozen apps`,
+"1.11":`ls|List files; -l long format with permissions
+pwd|Print working directory
+mv|Move or rename
+cp|Copy
+rm|Delete; -r recursive
+chmod|Change permissions; octal 7 = rwx, 5 = r-x, 4 = r-- (754)
+chown|Change owner and group (user:group)
+su/sudo|su switches user; sudo runs one command as root
+apt-get|Package manager for Debian/Ubuntu
+yum|Package manager for Red Hat/CentOS
+ip|Show or configure network settings
+df|Disk free space
+grep|Search text for a pattern
+ps|Process list; ps aux shows all
+man|Manual pages
+top|Live process monitor
+find|Search for files
+dig|DNS query tool
+cat|Print file contents
+nano|Simple terminal text editor
+Samba|SMB file sharing with Windows
+Best practices|Backups, antivirus, updates and patches`};
+const D=[];for(const k in R)R[k].split("\n").forEach(l=>{const[a,b]=l.split("|");D.push({k,a,b})});
+let cat="all",mode="study",ok=0,ko=0,cur,lock,sel,done,ms=[];
+const $=id=>document.getElementById(id),A=s=>document.querySelectorAll(s);
+const pool=()=>cat==="all"?D:D.filter(x=>x.k===cat);
+const sh=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+const sc=()=>{$("sc").textContent=mode==="study"?pool().length+" items":"✓ "+ok+"   ✗ "+ko};
+$("cat").innerHTML=`<option value="all">All of 1.0 (${D.length} items)</option>`+Object.keys(T).map(k=>`<option value="${k}">${k} ${T[k]}</option>`).join("");
+function study(){let h="";for(const k in T){if(cat!=="all"&&cat!==k)continue;h+=`<h2>${k} ${T[k]}</h2>`+D.filter(x=>x.k===k).map(x=>`<div class="row"><b>${x.a}</b><span>${x.b}</span></div>`).join("")}$("v").innerHTML=h}
+function quiz(){lock=false;const p=pool();cur=p[Math.random()*p.length|0];let d=p.filter(x=>x.k===cur.k&&x!==cur);if(d.length<3)d=p.filter(x=>x!==cur);const o=sh([cur,...sh(d).slice(0,3)]);
+$("v").innerHTML=`<div class="card"><small>${cur.k} ${T[cur.k]}</small><p>Which term matches?</p><p class="q">${cur.b}</p>`+o.map(x=>`<button class="opt" data-a="${x.a}">${x.a}</button>`).join("")+`<div id="n"></div></div>`;
+A(".opt").forEach(b=>b.onclick=()=>{if(lock)return;lock=true;const g=b.dataset.a===cur.a;g?ok++:ko++;A(".opt").forEach(c=>{if(c.dataset.a===cur.a)c.classList.add("good")});if(!g)b.classList.add("bad");sc();$("n").innerHTML=`<button class="go" id="nx">Next</button>`;$("nx").onclick=quiz})}
+function match(){ms=sh(pool()).slice(0,6);done=0;sel=null;const L=sh(ms),Q=sh(ms);
+$("v").innerHTML=`<div class="mt"><div>`+L.map(x=>`<button class="m" data-s="l" data-i="${ms.indexOf(x)}">${x.a}</button>`).join("")+`</div><div>`+Q.map(x=>`<button class="m" data-s="r" data-i="${ms.indexOf(x)}">${x.b}</button>`).join("")+`</div></div>`;
+A(".m").forEach(b=>b.onclick=()=>{if(b.classList.contains("done"))return;if(!sel||sel.dataset.s===b.dataset.s){if(sel)sel.classList.remove("on");sel=b;b.classList.add("on");return}
+const a=sel;sel=null;a.classList.remove("on");if(a.dataset.i===b.dataset.i){a.classList.add("done");b.classList.add("done");ok++;done++;sc();if(done===ms.length)setTimeout(match,700)}else{ko++;sc();b.classList.add("bad");setTimeout(()=>b.classList.remove("bad"),400)}})}
+function go(){sc();({study,quiz,match})[mode]()}
+$("cat").onchange=e=>{cat=e.target.value;ok=ko=0;go()};
+A(".tabs button").forEach(b=>b.onclick=()=>{A(".tabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");mode=b.dataset.m;ok=ko=0;go()});
+go();
+</script></body></html>
