@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CompTIA A+ Core 2 (220-1102) — Exam-Style Flashcards (4 Choices)</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-border: #334155;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --green: #22c55e;
+      --green-bg: rgba(34, 197, 94, 0.15);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.15);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.15);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background-color: var(--panel);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      color: var(--accent);
+      margin-bottom: 0.2rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    main {
+      max-width: 780px;
+      width: 100%;
+      margin: 1.5rem auto;
+      padding: 0 1rem 3rem;
+      flex: 1;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      padding: 0.85rem 1.1rem;
+      border-radius: 10px;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    select {
+      background: #0f172a;
+      color: var(--text);
+      border: 1px solid var(--panel-border);
+      padding: 0.5rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .stats {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .stat-good { color: var(--green); }
+    .stat-bad { color: var(--red); }
+    .stat-progress { color: var(--accent); }
+
+    /* Flashcard MCQ Box */
+    .flashcard-box {
+      background: var(--panel);
+      border: 2px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.55);
+      transition: border-color 0.3s;
+    }
+
+    .flashcard-box.answered-correct { border-color: var(--green); }
+    .flashcard-box.answered-wrong { border-color: var(--red); }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .domain-badge {
+      background: var(--amber-bg);
+      color: var(--amber);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .card-counter {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1.4rem;
+      line-height: 1.55;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .choice-btn {
+      background: #111827;
+      color: var(--text);
+      border: 1px solid var(--panel-border);
+      padding: 0.95rem 1.1rem;
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      transition: all 0.18s;
+    }
+
+    .choice-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: #1e293b;
+      transform: translateX(3px);
+    }
+
+    .choice-btn:disabled {
+      cursor: default;
+    }
+
+    .choice-letter {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--accent);
+      min-width: 22px;
+    }
+
+    .choice-btn.correct {
+      background: var(--green-bg);
+      border-color: var(--green);
+      color: #dcfce7;
+    }
+
+    .choice-btn.correct .choice-letter { color: var(--green); }
+
+    .choice-btn.incorrect {
+      background: var(--red-bg);
+      border-color: var(--red);
+      color: #fee2e2;
+    }
+
+    .choice-btn.incorrect .choice-letter { color: var(--red); }
+
+    /* Back of Card (Explanation) */
+    .explanation-panel {
+      margin-top: 1.4rem;
+      padding: 1.1rem 1.25rem;
+      border-radius: 8px;
+      background: #0f172a;
+      border-left: 4px solid var(--accent);
+      font-size: 0.92rem;
+      display: none;
+      animation: fadeIn 0.25s ease-in;
+    }
+
+    .explanation-panel.show { display: block; }
+
+    .explanation-title {
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .controls-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.25rem;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.7rem 1.3rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover:not(:disabled) { opacity: 0.9; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-secondary { background: var(--panel); color: var(--text); border: 1px solid var(--panel-border); }
+    .btn-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber); }
+
+    .summary-screen {
+      background: var(--panel);
+      border: 2px solid var(--accent);
+      border-radius: 14px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      display: none;
+    }
+
+    .summary-screen.show { display: block; }
+    .summary-score { font-size: 2.6rem; font-weight: 800; color: var(--accent); margin: 0.75rem 0; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>CompTIA A+ Core 2 (220-1102) — Exam Flashcard Deck</h1>
+    <p>100% Exam-Style Scenario Cards · 4 Multiple-Choice Options · Instant Answer & Rationale</p>
+  </header>
+
+  <main>
+    <div class="top-bar">
+      <select id="domainFilter" onchange="filterCards()">
+        <option value="all">All Domains (Full Deck - 36 Cards)</option>
+        <option value="1.0">Domain 1.0 — Operating Systems</option>
+        <option value="2.0">Domain 2.0 — Security</option>
+        <option value="3.0">Domain 3.0 — Software Troubleshooting</option>
+        <option value="4.0">Domain 4.0 — Operational Procedures</option>
+      </select>
+
+      <div class="stats">
+        <span class="stat-good">✓ <span id="goodCount">0</span></span>
+        <span class="stat-bad">✗ <span id="badCount">0</span></span>
+        <span class="stat-progress" id="pctScore">0%</span>
+      </div>
+
+      <button class="btn btn-amber" onclick="shuffleAndRestart()">Shuffle & Restart</button>
+    </div>
+
+    <!-- Active Flashcard -->
+    <div class="flashcard-box" id="flashcardBox">
+      <div class="card-header">
+        <span class="domain-badge" id="cardDomain">DOMAIN 1.0</span>
+        <span class="card-counter" id="cardCounter">Card 1 / 36</span>
+      </div>
+
+      <div class="question-text" id="questionText">Loading question...</div>
+
+      <div class="options-grid" id="optionsGrid"></div>
+
+      <div class="explanation-panel" id="explanationPanel">
+        <div class="explanation-title">CompTIA Exam Rationale</div>
+        <div id="explanationText"></div>
+      </div>
+    </div>
+
+    <!-- Completion Summary -->
+    <div class="summary-screen" id="summaryScreen">
+      <h2>Deck Completed!</h2>
+      <div class="summary-score" id="finalScoreText">0%</div>
+      <p id="finalDetails" style="color: var(--text-muted); margin-bottom: 1.5rem;"></p>
+      <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="shuffleAndRestart()">Practice Full Deck Again</button>
+        <button class="btn btn-secondary" id="retryWrongBtn" onclick="retryWrongOnly()">Review Missed Cards Only</button>
+      </div>
+    </div>
+
+    <div class="controls-footer" id="navControls">
+      <button class="btn btn-secondary" id="prevBtn" onclick="prevCard()">&larr; Previous Card</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextCard()">Next Card &rarr;</button>
+    </div>
+  </main>
+
+  <script>
+    const deck = [
+      // DOMAIN 1.0 - OPERATING SYSTEMS
+      {
+        domain: "1.0 — OBJ 1.1",
+        cat: "1.0",
+        q: "A video editing workstation requires 4 physical CPU sockets and 256 GB of RAM. Which Windows 10/11 edition is the MINIMUM required to properly support this hardware?",
+        options: [
+          "Windows Pro",
+          "Windows Home",
+          "Windows Pro for Workstations",
+          "Windows Education"
+        ],
+        answer: 2,
+        explanation: "Windows Pro for Workstations (and Enterprise) supports up to 4 physical CPUs and 6 TB of RAM. Windows Pro and Education cap at 2 physical CPUs, while Home caps at 1 CPU and 128 GB RAM."
+      },
+      {
+        domain: "1.0 — OBJ 1.2",
+        cat: "1.0",
+        q: "A technician is deploying Windows across 40 workstations with varying hardware specifications. Which installation method uses an XML answer file (autounattend.xml) to automate setup prompts?",
+        options: [
+          "Repair installation",
+          "Unattended installation",
+          "In-place upgrade",
+          "System Restore"
+        ],
+        answer: 1,
+        explanation: "An unattended installation uses an answer file (autounattend.xml) to pre-populate GUI dialog choices, saving time when deploying to heterogeneous hardware."
+      },
+      {
+        domain: "1.0 — OBJ 1.2",
+        cat: "1.0",
+        q: "A Windows PC fails to boot with 'Operating System Not Found', although the drive is visible in UEFI/BIOS. Which command from WinRE scans disks and adds the Windows installation back to the boot manager?",
+        options: [
+          "bootrec /fixmbr",
+          "bootrec /fixboot",
+          "bootrec /rebuildbcd",
+          "chkdsk /f /r"
+        ],
+        answer: 2,
+        explanation: "`bootrec /rebuildbcd` scans all disks for compatible Windows installations and rebuilds the Boot Configuration Data (BCD) store."
+      },
+      {
+        domain: "1.0 — OBJ 1.2",
+        cat: "1.0",
+        q: "Running `sfc /scannow` fails because the local Windows component store is corrupted. Which command should the technician run FIRST to repair the component store image?",
+        options: [
+          "dism /online /cleanup-image /restorehealth",
+          "gpupdate /force",
+          "diskpart clean",
+          "msconfig /safeboot"
+        ],
+        answer: 0,
+        explanation: "DISM with `/restorehealth` repairs the corrupted Windows component store so that `sfc /scannow` can subsequently replace damaged system files."
+      },
+      {
+        domain: "1.0 — OBJ 1.6",
+        cat: "1.0",
+        q: "After migrating 1.5 TB of data from \\server10 to a new NAS (\\server11) and decommissioning the old server, users receive 'Windows cannot access \\server10\shared\' when clicking their desktop shortcut. What is the MOST likely cause?",
+        options: [
+          "Users need local administrator rights on the NAS",
+          "Users are still mapped to the old server share path",
+          "GPO logon hours are restricting access",
+          "The NAS requires FAT32 formatting"
+        ],
+        answer: 1,
+        explanation: "Desktop shortcuts and mapped network drives pointing to the old UNC path (\\server10\shared\) must be updated or remapped to the new server name."
+      },
+      {
+        domain: "1.0 — OBJ 1.6",
+        cat: "1.0",
+        q: "A user connects their Windows laptop to an airport Wi-Fi hotspot. Which network profile should be selected to hide the PC from other devices and disable file sharing?",
+        options: [
+          "Private",
+          "Domain",
+          "Public",
+          "Workgroup"
+        ],
+        answer: 2,
+        explanation: "Selecting 'Public' disables Network Discovery and prevents file and printer sharing on untrusted public networks."
+      },
+      {
+        domain: "1.0 — OBJ 1.6",
+        cat: "1.0",
+        q: "You finished setting up a new Windows workstation on a small office workgroup, but the user cannot see any other computers on the local network. Which setting should you verify is enabled?",
+        options: [
+          "Remote Desktop Protocol (RDP)",
+          "Network Discovery (and Private profile)",
+          "BitLocker Drive Encryption",
+          "Metered Connection"
+        ],
+        answer: 1,
+        explanation: "Network Discovery allows Windows to see other computers on the local network and is automatically enabled only when the network profile is set to Private."
+      },
+      {
+        domain: "1.0 — OBJ 1.7",
+        cat: "1.0",
+        q: "A small office has 4 PCs connected to a 4-port router with no open ports and no dedicated server. What is the BEST way to allow all 4 PCs to print to a single USB printer?",
+        options: [
+          "Configure Bluetooth pairing to all 4 PCs simultaneously",
+          "Connect the printer to one PC and configure it as a shared printer",
+          "Install a dedicated print server appliance on the WAN port",
+          "Format the printer memory with exFAT"
+        ],
+        answer: 1,
+        explanation: "Sharing the printer from one connected workstation requires no extra switch ports or servers (that host PC must remain powered on)."
+      },
+      {
+        domain: "1.0 — OBJ 1.8",
+        cat: "1.0",
+        q: "A user tries to copy a 5.2 GB ISO image onto a 32 GB USB flash drive and gets a 'file is too large for the destination file system' error. How is the USB drive currently formatted?",
+        options: [
+          "NTFS",
+          "exFAT",
+          "FAT32",
+          "ext4"
+        ],
+        answer: 2,
+        explanation: "FAT32 has a strict 4 GB maximum single-file size limit. Formatting the drive as exFAT or NTFS resolves this."
+      },
+      {
+        domain: "1.0 — OBJ 1.11",
+        cat: "1.0",
+        q: "A Linux administrator needs to grant owner read/write/execute, group read/execute, and others read-only permissions on `backup.sh`. Which command is exact?",
+        options: [
+          "chmod 754 backup.sh",
+          "chmod 644 backup.sh",
+          "chown 754 backup.sh",
+          "chmod 751 backup.sh"
+        ],
+        answer: 0,
+        explanation: "Owner = rwx (4+2+1=7), Group = r-x (4+0+1=5), Others = r-- (4+0+0=4) -> `chmod 754`."
+      },
+
+      // DOMAIN 2.0 - SECURITY
+      {
+        domain: "2.0 — OBJ 2.1",
+        cat: "2.0",
+        q: "Your company rents rack space inside a shared colocation data center. Which physical security control best prevents unauthorized personnel from opening your server cabinet when you are off-site?",
+        options: [
+          "Entry control roster",
+          "Smart card reader on the main lobby door",
+          "Server rack lock",
+          "USB port blocker"
+        ],
+        answer: 2,
+        explanation: "A physical server lock (keyed, cipher, or biometric) installed directly on the server cabinet secures your hardware inside a shared facility."
+      },
+      {
+        domain: "2.0 — OBJ 2.2",
+        cat: "2.0",
+        q: "Which Windows administrative tool allows system administrators to centrally deploy security configurations, software, and desktop restrictions across hundreds of domain-joined computers?",
+        options: [
+          "Host-based Intrusion Prevention System (HIPS)",
+          "Group Policy Object (GPO)",
+          "Device Manager",
+          "Disk Management"
+        ],
+        answer: 1,
+        explanation: "Group Policy Objects (GPOs) in Active Directory centrally define and enforce configuration and security policies across organizational units."
+      },
+      {
+        domain: "2.0 — OBJ 2.3",
+        cat: "2.0",
+        q: "After identifying a malware infection on a Windows workstation and quarantining it from the network, what is the IMMEDIATE next step in CompTIA's official 7-step malware removal process?",
+        options: [
+          "Update anti-malware definitions",
+          "Disable System Restore",
+          "Educate the end user",
+          "Run a full scan in Safe Mode"
+        ],
+        answer: 1,
+        explanation: "Step 3 of CompTIA's 7-step malware removal process is disabling System Restore so Windows does not back up or restore infected files."
+      },
+      {
+        domain: "2.0 — OBJ 2.4",
+        cat: "2.0",
+        q: "Which anti-malware solution is deployed as a dedicated on-premise inline appliance that scans all incoming network traffic without requiring an agent installed on client endpoints?",
+        options: [
+          "Host-based anti-malware",
+          "Network-based anti-malware",
+          "Cloud-based anti-malware",
+          "Boot-sector scanner"
+        ],
+        answer: 1,
+        explanation: "Network-based anti-malware runs on an inline appliance (such as a UTM firewall) to inspect traffic before it reaches endpoints."
+      },
+      {
+        domain: "2.0 — OBJ 2.5",
+        cat: "2.0",
+        q: "An attacker uses a pre-compiled text file containing 1 million common passwords and symbol substitutions (e.g., Dr@g0n) to crack a Windows password. What type of attack is this?",
+        options: [
+          "Brute-force attack",
+          "Dictionary attack",
+          "Rainbow table attack",
+          "Vishing attack"
+        ],
+        answer: 1,
+        explanation: "A dictionary attack uses a curated word list (including character/symbol substitutions) rather than trying every possible random character combination."
+      },
+      {
+        domain: "2.0 — OBJ 2.7",
+        cat: "2.0",
+        q: "Audit logs show an unauthorized USB mass storage device was plugged into several servers, followed by dozens of failed login attempts before a breach occurred. Which TWO actions directly mitigate these vulnerabilities?",
+        options: [
+          "Disable/modify AutoRun settings & Set account lockout after 3 failed attempts",
+          "Enable WPS & Install a host-based firewall",
+          "Enable guest accounts & Disable UAC",
+          "Configure port forwarding & Enable DHCP"
+        ],
+        answer: 0,
+        explanation: "Disabling AutoRun prevents automatic execution from USB drives, and account lockout thresholds stop online password-guessing attacks."
+      },
+      {
+        domain: "2.0 — OBJ 2.8",
+        cat: "2.0",
+        q: "A Chief Security Officer wants to ensure company data cannot be compromised if corporate smartphones are lost or stolen. Which TWO configurations provide the BEST protection?",
+        options: [
+          "Enable full device encryption & Configure remote wipe capability",
+          "Disable Wi-Fi & Enable screen auto-brightness",
+          "Use a 4-digit swipe pattern & Disable app updates",
+          "Clear browser history daily & Disable Bluetooth"
+        ],
+        answer: 0,
+        explanation: "Full device encryption protects data at rest offline, while remote wipe enables IT to erase the device remotely if stolen."
+      },
+      {
+        domain: "2.0 — OBJ 2.9",
+        cat: "2.0",
+        q: "A military contractor needs to permanently and rapidly erase data from 500 decommissioned magnetic hard disk drives (HDDs). Which sanitization method is MOST fast and effective?",
+        options: [
+          "Running a standard Windows format on each drive",
+          "Degaussing the hard drives with an industrial degausser",
+          "Running chkdsk /r on each drive",
+          "Deleting partitions in Disk Management"
+        ],
+        answer: 1,
+        explanation: "Degaussing exposes magnetic media to a powerful magnetic field, permanently erasing HDDs in seconds at scale."
+      },
+      {
+        domain: "2.0 — OBJ 2.10",
+        cat: "2.0",
+        q: "An attacker breached a company's wireless network by brute-forcing an 8-digit PIN, then logged into the router to change DNS settings. Which TWO flaws enabled this attack?",
+        options: [
+          "WPS enabled & Default administrative login credentials",
+          "WPA3-AES enabled & MAC filtering enabled",
+          "SSID broadcast disabled & Static IP addressing",
+          "DHCP disabled & Outdated browser cache"
+        ],
+        answer: 0,
+        explanation: "Wi-Fi Protected Setup (WPS) relies on a flawed 8-digit PIN vulnerable to brute-force, and default router credentials allowed DNS hijacking."
+      },
+
+      // DOMAIN 3.0 - SOFTWARE TROUBLESHOOTING
+      {
+        domain: "3.0 — OBJ 3.1",
+        cat: "3.0",
+        q: "Immediately after receiving overnight security patches and updates, several identical workstations exhibit screen static whenever the mouse is moved. What action should you take?",
+        options: [
+          "Rollback the video card driver",
+          "Run sfc /scannow on all workstations",
+          "Disable DirectX in services.msc",
+          "Replace the monitors"
+        ],
+        answer: 0,
+        explanation: "Always question what changed recently. Rolling back the video driver updated overnight is the fastest, most targeted fix."
+      },
+      {
+        domain: "3.0 — OBJ 3.1",
+        cat: "3.0",
+        q: "After installing a Windows security update, a workstation boots to a blank black screen. What is the NEXT troubleshooting step?",
+        options: [
+          "Boot into Safe Mode and roll back the recent security update",
+          "Open RegEdit and delete HKEY_LOCAL_MACHINE",
+          "Perform a clean installation of Windows",
+          "Reset the BIOS password"
+        ],
+        answer: 0,
+        explanation: "Booting into Safe Mode loads minimal drivers so you can uninstall/roll back the problematic security update."
+      },
+      {
+        domain: "3.0 — OBJ 3.1",
+        cat: "3.0",
+        q: "A Windows 10 PC takes over 4 minutes to boot to the desktop. What is the FIRST step a technician should take to speed up the boot process?",
+        options: [
+          "Disable unnecessary programs in Task Manager's Startup tab",
+          "Reinstall Windows from a USB drive",
+          "Rebuild the user's local profile",
+          "Boot permanently in Safe Mode"
+        ],
+        answer: 0,
+        explanation: "Disabling non-essential startup applications via Task Manager (Startup tab) or MSConfig is the least disruptive first step."
+      },
+      {
+        domain: "3.0 — OBJ 3.2",
+        cat: "3.0",
+        q: "A single social media app on an Android phone crashes immediately upon launch, while all other apps work fine and there were no recent updates. What is the BEST first troubleshooting step?",
+        options: [
+          "Clear the application's cache and data",
+          "Factory reset the smartphone",
+          "Check for Android OS firmware updates",
+          "Replace the SIM card"
+        ],
+        answer: 0,
+        explanation: "Clearing corrupted app cache/data is the least disruptive step for a single-app crash before resorting to uninstallation."
+      },
+      {
+        domain: "3.0 — OBJ 3.2",
+        cat: "3.0",
+        q: "A 6-month-old Android phone suddenly became sluggish right after the customer installed a new stock market tracking app. What should you do FIRST?",
+        options: [
+          "Uninstall the app, reboot the phone, and reinstall the app",
+          "Factory reset the smartphone",
+          "Replace the smartphone battery",
+          "Disable cellular data"
+        ],
+        answer: 0,
+        explanation: "Because the slowdown began right after installing that specific app, uninstalling it, rebooting, and reinstalling addresses a corrupted install."
+      },
+      {
+        domain: "3.0 — OBJ 3.3",
+        cat: "3.0",
+        q: "A user reports their smartphone lost internet connectivity despite being connected to Wi-Fi (other devices on the Wi-Fi work fine), and they saw an unusual notification warning of high network traffic. What is the BEST action?",
+        options: [
+          "Investigate for malware and run a full security scan on the device",
+          "Restart the office wireless router",
+          "Toggle airplane mode on and off",
+          "Assign a static IPv6 address"
+        ],
+        answer: 0,
+        explanation: "Sudden loss of internet isolated to one device paired with high traffic warnings indicates potential malware hijacking network activity."
+      },
+      {
+        domain: "3.0 — OBJ 3.4",
+        cat: "3.0",
+        q: "A user in the US sees Google's homepage load in Italian despite not using a VPN, and a full anti-malware scan came back clean. What should you check NEXT?",
+        options: [
+          "Check and remove any unauthorized proxy servers configured in the browser",
+          "Verify the system's date and time zone",
+          "Disable Windows Defender Firewall",
+          "Reinstall the NIC driver"
+        ],
+        answer: 0,
+        explanation: "A rogue or maliciously configured browser proxy server routes web traffic through a foreign server without triggering antivirus signatures."
+      },
+      {
+        domain: "3.0 — OBJ 3.4",
+        cat: "3.0",
+        q: "A colleague calls Barbara asking why she sent him an offensive email she has no memory of sending. What has MOST likely happened to Barbara?",
+        options: [
+          "Her email account has been hijacked",
+          "She is experiencing a ransomware attack",
+          "Her DNS cache is poisoned",
+          "Her SMTP port is blocked by the firewall"
+        ],
+        answer: 0,
+        explanation: "Unauthorized emails sent from a user's legitimate address indicate a hijacked/compromised email account."
+      },
+      {
+        domain: "3.0 — OBJ 3.4",
+        cat: "3.0",
+        q: "To fix a 'Windows Update service is not running' error, a technician stops the service, re-registers the Windows Update DLL files with `regsvr32`, and restarts the service. What must be done NEXT?",
+        options: [
+          "Reboot the computer",
+          "Rollback the video driver",
+          "Run diskpart clean",
+          "Disable Windows Firewall"
+        ],
+        answer: 0,
+        explanation: "After re-registering Windows Update DLLs and restarting the service, a full system reboot is required for the changes to take effect."
+      },
+
+      // DOMAIN 4.0 - OPERATIONAL PROCEDURES
+      {
+        domain: "4.0 — OBJ 4.1",
+        cat: "4.0",
+        q: "A junior technician needs the exact, step-by-step checklist required to install a custom proprietary software package within their organization. Which document should they consult?",
+        options: [
+          "SOP (Standard Operating Procedure)",
+          "AUP (Acceptable Use Policy)",
+          "MSDS (Material Safety Data Sheet)",
+          "SLA (Service Level Agreement)"
+        ],
+        answer: 0,
+        explanation: "A Standard Operating Procedure (SOP) provides rigid, step-by-step instructions for completing recurring technical tasks."
+      },
+      {
+        domain: "4.0 — OBJ 4.3",
+        cat: "4.0",
+        q: "During a disaster recovery event, which statement accurately compares virtual machines (VMs) to physical servers?",
+        options: [
+          "A virtual machine has less downtime because it is hardware-independent and restores quickly from backups/snapshots",
+          "A virtual machine has more downtime because drivers must be manually rebuilt",
+          "Virtual machines cannot be used for redundancy or failover",
+          "Both have identical restoration timelines"
+        ],
+        answer: 0,
+        explanation: "VMs abstract hardware dependencies, allowing rapid restoration or cloning onto any hypervisor host with minimal downtime."
+      },
+      {
+        domain: "4.0 — OBJ 4.5",
+        cat: "4.0",
+        q: "A server room environmental monitor alerts that relative humidity has climbed above 80%. What is the primary physical risk to the servers?",
+        options: [
+          "Corrosion of internal components",
+          "Accidental electrostatic discharge (ESD)",
+          "Under-voltage brownouts",
+          "Thermal throttling from dry air"
+        ],
+        answer: 0,
+        explanation: "Humidity above 60% risks moisture condensation and corrosion; humidity below 40% increases electrostatic discharge (ESD)."
+      },
+      {
+        domain: "4.0 — OBJ 4.5",
+        cat: "4.0",
+        q: "While cleaning out an IT storage closet, you find unmarked bottles of chemical solvent cleaners that need disposal. Which document specifies safe handling and disposal rules?",
+        options: [
+          "MSDS (Material Safety Data Sheet)",
+          "MOU (Memorandum of Understanding)",
+          "SOW (Statement of Work)",
+          "AUP (Acceptable Use Policy)"
+        ],
+        answer: 0,
+        explanation: "Material Safety Data Sheets (MSDS / SDS) detail chemical hazards, PPE requirements, and environmental disposal procedures."
+      },
+      {
+        domain: "4.0 — OBJ 4.6",
+        cat: "4.0",
+        q: "Every new hire must sign a document agreeing to rules and restrictions on what they can and cannot do on corporate computers and the internet. Which document is this?",
+        options: [
+          "AUP (Acceptable Use Policy)",
+          "SLA (Service Level Agreement)",
+          "SOW (Statement of Work)",
+          "MOU (Memorandum of Understanding)"
+        ],
+        answer: 0,
+        explanation: "An Acceptable Use Policy (AUP) defines permissible and prohibited user behavior on company IT assets."
+      },
+      {
+        domain: "4.0 — OBJ 4.6",
+        cat: "4.0",
+        q: "Your company is deploying a retail and e-commerce system to accept customer credit cards. Which regulatory compliance standard applies?",
+        options: [
+          "PCI-DSS",
+          "PHI / HIPAA",
+          "DMCA",
+          "DRM"
+        ],
+        answer: 0,
+        explanation: "PCI-DSS (Payment Card Industry Data Security Standard) governs any organization that stores, processes, or transmits cardholder data."
+      },
+      {
+        domain: "4.0 — OBJ 4.6",
+        cat: "4.0",
+        q: "An online job application asks candidates to enter their Social Security Number (SSN), date of birth, and home address. Which category of regulated data is this?",
+        options: [
+          "PII (Personally Identifiable Information)",
+          "PHI (Protected Health Information)",
+          "IP (Intellectual Property)",
+          "DRM (Digital Rights Management)"
+        ],
+        answer: 0,
+        explanation: "PII is any information that can identify, contact, or locate a specific individual (SSN, DOB, name, email, biometrics)."
+      },
+      {
+        domain: "4.0 — OBJ 4.9",
+        cat: "4.0",
+        q: "An organization hosts an FTP server that must be accessible from the public internet, but security wants to protect the internal Domain Controller if the FTP server is compromised. What is the BEST design?",
+        options: [
+          "Migrate the FTP server from the internal LAN to a screened subnet (DMZ)",
+          "Block port 21 outbound on the internal firewall",
+          "Enable implicit deny on the LAN switch",
+          "Disable DHCP on the FTP server"
+        ],
+        answer: 0,
+        explanation: "A screened subnet (DMZ) isolates public-facing servers in a perimeter network so an attacker cannot pivot directly into the internal LAN."
+      },
+      {
+        domain: "4.0 — OBJ 4.9",
+        cat: "4.0",
+        q: "Which open-source graphical remote access protocol allows users on Linux or macOS to view and control a remote desktop screen with their mouse and keyboard?",
+        options: [
+          "VNC (Virtual Network Computing)",
+          "RDP (Remote Desktop Protocol)",
+          "SSH (Secure Shell)",
+          "Telnet"
+        ],
+        answer: 0,
+        explanation: "VNC is an open-source, cross-platform graphical screen-sharing tool. RDP is proprietary to Microsoft, while SSH and Telnet are text-based CLI protocols."
+      }
+    ];
+
+    let activeDeck = [...deck];
+    let currentIndex = 0;
+    let goodCount = 0;
+    let badCount = 0;
+    let missedCards = [];
+    let answeredState = {}; // track answered index -> chosen option
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function updateStats() {
+      document.getElementById('goodCount').innerText = goodCount;
+      document.getElementById('badCount').innerText = badCount;
+      const total = goodCount + badCount;
+      const pct = total === 0 ? 0 : Math.round((goodCount / total) * 100);
+      document.getElementById('pctScore').innerText = `${pct}%`;
+    }
+
+    function renderCard() {
+      const box = document.getElementById('flashcardBox');
+      const summary = document.getElementById('summaryScreen');
+      const nav = document.getElementById('navControls');
+
+      if (currentIndex >= activeDeck.length) {
+        box.style.display = 'none';
+        nav.style.display = 'none';
+        summary.classList.add('show');
+        const total = goodCount + badCount;
+        const pct = total === 0 ? 0 : Math.round((goodCount / total) * 100);
+        document.getElementById('finalScoreText').innerText = `${pct}% (${goodCount}/${activeDeck.length})`;
+        document.getElementById('finalDetails').innerText = missedCards.length === 0
+          ? "Flawless run! You mastered every card in this deck."
+          : `You missed ${missedCards.length} card(s). Click below to drill only the ones you missed.`;
+        document.getElementById('retryWrongBtn').style.display = missedCards.length > 0 ? 'inline-block' : 'none';
+        return;
+      }
+
+      box.style.display = 'block';
+      nav.style.display = 'flex';
+      summary.classList.remove('show');
+
+      const card = activeDeck[currentIndex];
+      document.getElementById('cardDomain').innerText = `DOMAIN ${card.domain}`;
+      document.getElementById('cardCounter').innerText = `Card ${currentIndex + 1} / ${activeDeck.length}`;
+      document.getElementById('questionText').innerText = card.q;
+
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = '';
+
+      const explPanel = document.getElementById('explanationPanel');
+      document.getElementById('explanationText').innerText = card.explanation;
+
+      box.classList.remove('answered-correct', 'answered-wrong');
+      explPanel.classList.remove('show');
+
+      const previousChoice = answeredState[currentIndex];
+
+      card.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.innerHTML = `<span class="choice-letter">${String.fromCharCode(65 + idx)}.</span><span>${opt}</span>`;
+
+        if (previousChoice !== undefined) {
+          btn.disabled = true;
+          if (idx === card.answer) btn.classList.add('correct');
+          if (idx === previousChoice && previousChoice !== card.answer) btn.classList.add('incorrect');
+        } else {
+          btn.onclick = () => selectChoice(idx);
+        }
+
+        grid.appendChild(btn);
+      });
+
+      if (previousChoice !== undefined) {
+        explPanel.classList.add('show');
+        box.classList.add(previousChoice === card.answer ? 'answered-correct' : 'answered-wrong');
+      }
+
+      document.getElementById('prevBtn').disabled = currentIndex === 0;
+      document.getElementById('nextBtn').innerText = currentIndex === activeDeck.length - 1 ? 'Finish Deck ✓' : 'Next Card →';
+    }
+
+    function selectChoice(chosenIdx) {
+      if (answeredState[currentIndex] !== undefined) return;
+
+      const card = activeDeck[currentIndex];
+      answeredState[currentIndex] = chosenIdx;
+
+      if (chosenIdx === card.answer) {
+        goodCount++;
+      } else {
+        badCount++;
+        if (!missedCards.includes(card)) missedCards.push(card);
+      }
+
+      updateStats();
+      renderCard();
+    }
+
+    function nextCard() {
+      if (currentIndex < activeDeck.length) {
+        currentIndex++;
+        renderCard();
+      }
+    }
+
+    function prevCard() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderCard();
+      }
+    }
+
+    function filterCards() {
+      const val = document.getElementById('domainFilter').value;
+      const base = val === 'all' ? [...deck] : deck.filter(c => c.cat === val);
+      activeDeck = shuffleArray(base);
+      resetState();
+    }
+
+    function shuffleAndRestart() {
+      const val = document.getElementById('domainFilter').value;
+      const base = val === 'all' ? [...deck] : deck.filter(c => c.cat === val);
+      activeDeck = shuffleArray(base);
+      resetState();
+    }
+
+    function retryWrongOnly() {
+      if (missedCards.length === 0) return;
+      activeDeck = shuffleArray([...missedCards]);
+      resetState();
+    }
+
+    function resetState() {
+      currentIndex = 0;
+      goodCount = 0;
+      badCount = 0;
+      missedCards = [];
+      answeredState = {};
+      updateStats();
+      renderCard();
+    }
+
+    // Start shuffled
+    activeDeck = shuffleArray(deck);
+    renderCard();
+  </script>
+</body>
+</html>

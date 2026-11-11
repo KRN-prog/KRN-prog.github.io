@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CompTIA A+ Core 2 (220-1102) — Complete Mastery Suite</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-border: #334155;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --green: #22c55e;
+      --green-bg: rgba(34, 197, 94, 0.15);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.15);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.15);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    header {
+      background-color: var(--panel);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      background: #111827;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--panel-border);
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: var(--panel);
+      color: var(--text-muted);
+      border: 1px solid var(--panel-border);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    .nav-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1.25rem;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .fc-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    select {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--panel-border);
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    /* Flashcards */
+    .flashcard-container {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 650px;
+      height: 360px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .flashcard.flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      background: var(--panel);
+      border: 2px solid var(--panel-border);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      border-color: var(--accent);
+      overflow-y: auto;
+    }
+
+    .card-tag {
+      align-self: flex-start;
+      background: var(--amber-bg);
+      color: var(--amber);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .card-text {
+      font-size: 1.15rem;
+      font-weight: 500;
+      text-align: center;
+      margin: 1rem 0;
+      white-space: pre-line;
+    }
+
+    .card-prompt {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .fc-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .btn {
+      padding: 0.7rem 1.4rem;
+      border-radius: 6px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-secondary { background: var(--panel-border); color: var(--text); }
+
+    /* Quiz */
+    .quiz-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .quiz-question {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .option-btn {
+      background: #111827;
+      color: var(--text);
+      border: 1px solid var(--panel-border);
+      padding: 0.9rem 1rem;
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      border-color: var(--accent);
+      background: #1f2937;
+    }
+
+    .option-btn.correct {
+      background: var(--green-bg);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .option-btn.incorrect {
+      background: var(--red-bg);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .quiz-explanation {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      background: #0f172a;
+      border-left: 4px solid var(--accent);
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .quiz-explanation.show { display: block; }
+
+    /* Cheat Sheet */
+    .cheat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .cheat-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 1.4rem;
+    }
+
+    .cheat-card h3 {
+      color: var(--accent);
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.9rem;
+      font-size: 1.05rem;
+    }
+
+    ul, ol { padding-left: 1.25rem; font-size: 0.88rem; }
+    li { margin-bottom: 0.45rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 0.5rem;
+    }
+
+    th, td {
+      border: 1px solid var(--panel-border);
+      padding: 0.45rem 0.65rem;
+      text-align: left;
+    }
+
+    th { background: #111827; color: var(--accent); }
+
+    code {
+      font-family: var(--font-mono);
+      background: #0f172a;
+      color: var(--amber);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+    }
+
+    .score-banner {
+      background: var(--panel);
+      border: 1px solid var(--accent);
+      padding: 0.9rem;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>CompTIA A+ Core 2 (220-1102) — Complete Mastery Suite</h1>
+    <p>All-in-One Revision: Domains 1.0 (OS), 2.0 (Security), 3.0 (Troubleshooting) & 4.0 (Operational Procedures)</p>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="switchTab('quiz', this)">Exam Practice Quiz (Targeted)</button>
+    <button class="nav-btn" onclick="switchTab('flashcards', this)">Interactive Flashcards</button>
+    <button class="nav-btn" onclick="switchTab('cheatsheet', this)">Complete Cheat Sheets</button>
+  </nav>
+
+  <main>
+    <!-- QUIZ TAB -->
+    <div id="quiz" class="tab-content active">
+      <div class="score-banner">
+        Score: <span id="correctCount">0</span> / <span id="totalAttempted">0</span> (<span id="scorePct">0%</span>)
+      </div>
+
+      <div class="fc-controls">
+        <select id="quizFilter" onchange="filterQuiz()">
+          <option value="all">All Domains (Targeted Exam Prep)</option>
+          <option value="1.0">Domain 1.0 — Operating Systems</option>
+          <option value="2.0">Domain 2.0 — Security</option>
+          <option value="3.0">Domain 3.0 — Software Troubleshooting</option>
+          <option value="4.0">Domain 4.0 — Operational Procedures</option>
+        </select>
+        <button class="btn btn-secondary" onclick="resetQuiz()">Reset Quiz</button>
+      </div>
+
+      <div id="quizContainer"></div>
+    </div>
+
+    <!-- FLASHCARDS TAB -->
+    <div id="flashcards" class="tab-content">
+      <div class="fc-controls">
+        <select id="fcFilter" onchange="filterFlashcards()">
+          <option value="all">All Flashcards</option>
+          <option value="1.0">Domain 1.0 — Operating Systems</option>
+          <option value="2.0">Domain 2.0 — Security</option>
+          <option value="3.0">Domain 3.0 — Troubleshooting</option>
+          <option value="4.0">Domain 4.0 — Operational Procedures</option>
+        </select>
+        <div id="fcProgress">Card 1 of 0</div>
+      </div>
+
+      <div class="flashcard-container">
+        <div class="flashcard" id="card" onclick="flipCard()">
+          <div class="card-face card-front">
+            <span class="card-tag" id="cardTag">Domain</span>
+            <div class="card-text" id="cardFrontText">Front</div>
+            <div class="card-prompt">Click card to flip</div>
+          </div>
+          <div class="card-face card-back">
+            <span class="card-tag" id="cardBackTag">Answer</span>
+            <div class="card-text" id="cardBackText">Back</div>
+            <div class="card-prompt">Click card to flip back</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fc-buttons">
+        <button class="btn btn-secondary" onclick="prevCard()">Previous</button>
+        <button class="btn btn-primary" onclick="flipCard()">Flip</button>
+        <button class="btn btn-secondary" onclick="nextCard()">Next</button>
+      </div>
+    </div>
+
+    <!-- CHEAT SHEET TAB -->
+    <div id="cheatsheet" class="tab-content">
+      <div class="cheat-grid">
+        <!-- Domain 1.0 -->
+        <div class="cheat-card">
+          <h3>Domain 1.0 — Operating Systems</h3>
+          <ul>
+            <li><b>Editions & Limits:</b> 32-bit = Max 4 GB RAM. Home = 128 GB RAM, no Domain Join, no RDP host, no BitLocker. Pro = 2 TB RAM, Domain Join, BitLocker. Workstations = 6 TB RAM, 4 CPUs.</li>
+            <li><b>Installations:</b> Unattended uses <code>autounattend.xml</code>. Repair install replaces OS files while keeping apps/data. <code>Sysprep</code> strips SIDs before image capture.</li>
+            <li><b>CLI Repairs:</b> <code>sfc /scannow</code> (system files) &rarr; if fails, run <code>dism /online /cleanup-image /restorehealth</code>. <code>chkdsk /f /r</code> (fixes FS errors + bad physical sectors).</li>
+            <li><b>Bootrec:</b> <code>/fixmbr</code> (MBR), <code>/fixboot</code> (boot sector), <code>/rebuildbcd</code> (rebuilds OS boot list).</li>
+            <li><b>Networking & Shares:</b> Public profile hides PC (coffee shop); Private enables Network Discovery & file sharing. Mapped drives pointing to old servers must be remapped to new UNC paths.</li>
+            <li><b>Linux & macOS:</b> <code>su</code> (switch session to root) vs <code>sudo</code> (single root command). <code>chown user:group file</code>. <code>ps aux</code> (static snapshot) vs <code>top</code> (live). macOS <b>Activity Monitor</b> = Task Manager.</li>
+          </ul>
+        </div>
+
+        <!-- Domain 2.0 -->
+        <div class="cheat-card">
+          <h3>Domain 2.0 — Security</h3>
+          <ul>
+            <li><b>7-Step Malware Removal:</b> 1. Identify symptoms &rarr; 2. Quarantine &rarr; 3. Disable System Restore &rarr; 4. Update anti-malware &rarr; 5. Scan & remove (Safe Mode) &rarr; 6. Enable System Restore & create point &rarr; 7. Educate end user.</li>
+            <li><b>Password Attacks:</b> <b>Dictionary</b> = uses a pre-compiled word list (with symbol variations). <b>Brute-force</b> = tries all character combinations. <b>Rainbow table</b> = precomputed hashes.</li>
+            <li><b>SOHO & Wireless:</b> Disable <b>WPS</b> (8-digit PIN vulnerable to brute-force). Always change default router admin credentials. Use WPA2/WPA3 with AES.</li>
+            <li><b>Physical & Mobile Security:</b> Server rack locks protect shared colocation servers. Mobile theft protection = <b>Full device encryption</b> + <b>Remote wipe</b>.</li>
+            <li><b>Data Destruction:</b> <b>Degaussing</b> = fastest method to erase massive quantities of magnetic HDDs using a strong magnetic field.</li>
+          </ul>
+        </div>
+
+        <!-- Domain 3.0 -->
+        <div class="cheat-card">
+          <h3>Domain 3.0 — Software Troubleshooting</h3>
+          <ul>
+            <li><b>Mobile App Issues:</b> Single app crashing &rarr; <b>Clear app cache & data</b> first. Slow phone right after installing a new app &rarr; <b>Uninstall, reboot, reinstall</b>.</li>
+            <li><b>Post-Update Crashes / Static:</b> Screen static or blank boot right after security patches/updates &rarr; Boot into <b>Safe Mode</b> and <b>Rollback</b> the driver or recent update.</li>
+            <li><b>Slow Boot:</b> First step = Disable unnecessary startup programs via <b>Task Manager (Startup tab)</b> or <code>msconfig</code>.</li>
+            <li><b>Browser Redirects / Foreign Language:</b> If anti-malware is clean, check and remove unauthorized <b>Proxy Servers</b> in browser settings.</li>
+            <li><b>Windows Update Service Fix:</b> After re-registering Update DLLs (<code>regsvr32</code>) and restarting the service, always <b>Reboot the PC</b>.</li>
+          </ul>
+        </div>
+
+        <!-- Domain 4.0 -->
+        <div class="cheat-card">
+          <h3>Domain 4.0 — Operational Procedures</h3>
+          <table>
+            <tr><th>Document / Standard</th><th>Definition & Exam Trigger</th></tr>
+            <tr><td><code>AUP</code></td><td>Acceptable Use Policy — Rules employees sign governing proper use of company IT/internet.</td></tr>
+            <tr><td><code>SOP</code></td><td>Standard Operating Procedure — Step-by-step technical instructions for a repeatable task.</td></tr>
+            <tr><td><code>MSDS</code></td><td>Material Safety Data Sheet — Safety & disposal instructions for chemical cleaners/hazards.</td></tr>
+            <tr><td><code>PCI-DSS</code></td><td>Compliance standard required for processing/storing credit card transactions.</td></tr>
+            <tr><td><code>PII</code> vs <code>PHI</code></td><td>PII = Personal Identifiable Info (SSN, DOB, email). PHI = Protected Health Info (medical records).</td></tr>
+          </table>
+          <ul style="margin-top:0.75rem;">
+            <li><b>Server Room Environment:</b> Ideal humidity = <b>40–60%</b>. High humidity (>80%) causes <b>corrosion</b>; low humidity causes <b>ESD (static discharge)</b>.</li>
+            <li><b>Screened Subnet (DMZ):</b> Place public-facing servers (FTP/Web) in a screened subnet to isolate them from the internal LAN.</li>
+            <li><b>Virtualization DR:</b> Virtual machines have <b>less downtime</b> than physical servers during disaster recovery (fast snapshots/cloning, hardware-independent).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      // Domain 1.0
+      {
+        domain: "1.0",
+        q: "You migrated 1.5 TB of data from an old file server (\\\\server10) to a new NAS (\\\\server11) and decommissioned the old server. Users verified they have permissions, but receive 'Windows cannot access \\\\server10\\shared\\' when clicking their desktop shortcut. What is the MOST likely cause?",
+        options: [
+          "Users need local administrator rights on the NAS",
+          "Users are still mapped to the old server share path",
+          "Group Policy is blocking SMB traffic outside business hours",
+          "The NAS requires NTFS instead of ext4"
+        ],
+        answer: 1,
+        explanation: "Existing mapped drives or shortcuts still point to the decommissioned server's UNC path (\\\\server10\\shared\\) and must be remapped to the new server name."
+      },
+      {
+        domain: "1.0",
+        q: "Which type of Windows installation uses an answer file (autounattend.xml) to automate setup prompts across multiple computers without manual technician intervention?",
+        options: ["Repair installation", "In-place upgrade", "Unattended installation", "System Restore"],
+        answer: 2,
+        explanation: "An unattended installation uses an answer file (autounattend.xml) to pre-answer GUI prompts during Windows setup."
+      },
+      {
+        domain: "1.0",
+        q: "A PC displays 'Operating System Not Found' on boot, though the hard drive is detected in the UEFI/BIOS. Which command from WinRE scans all disks and adds the missing Windows installation back to the boot menu?",
+        options: ["bootrec /fixmbr", "bootrec /fixboot", "bootrec /rebuildbcd", "sfc /scannow"],
+        answer: 2,
+        explanation: "`bootrec /rebuildbcd` scans drives for Windows installations and rebuilds the Boot Configuration Data (BCD) store."
+      },
+      {
+        domain: "1.0",
+        q: "Joanne connects her Windows laptop to a public coffee shop Wi-Fi network. Which network profile should she choose to hide her PC from other devices and block file sharing?",
+        options: ["Private", "Public", "Domain", "Workgroup"],
+        answer: 1,
+        explanation: "Selecting 'Public' disables Network Discovery and blocks file and printer sharing on untrusted networks."
+      },
+      // Domain 2.0
+      {
+        domain: "2.0",
+        q: "An attacker uses a pre-compiled file containing 1 million common passwords and symbol variations (e.g., Dr@g0n) to crack a Windows account. What type of attack is this?",
+        options: ["Brute-force attack", "Dictionary attack", "Rainbow table attack", "Shoulder surfing"],
+        answer: 1,
+        explanation: "A dictionary attack tests a curated list of common words and character substitutions rather than trying every possible random character combination."
+      },
+      {
+        domain: "2.0",
+        q: "A wireless network was breached via an 8-digit PIN brute-force attack, and the attacker logged into the router to alter DNS settings. Which TWO configurations allowed this?",
+        options: [
+          "WPS enabled & Default admin credentials",
+          "WPA2-AES enabled & DHCP disabled",
+          "MAC filtering enabled & Outdated firmware",
+          "Guest network enabled & Static IP"
+        ],
+        answer: 0,
+        explanation: "Wi-Fi Protected Setup (WPS) uses an 8-digit PIN easily cracked via brute-force, and default router admin credentials allowed the attacker to modify DNS settings."
+      },
+      {
+        domain: "2.0",
+        q: "A defense contractor needs to quickly and permanently erase data from 500 decommissioned magnetic hard disk drives. Which method is the MOST fast and effective?",
+        options: [
+          "Performing a standard Windows format on each drive",
+          "Degaussing the hard drives with an industrial degausser",
+          "Drilling a single hole through each chassis",
+          "Running chkdsk /r on each drive"
+        ],
+        answer: 1,
+        explanation: "Degaussing uses a powerful magnetic field to neutralize magnetic domains on HDDs in seconds, making it ideal for bulk destruction."
+      },
+      {
+        domain: "2.0",
+        q: "Which TWO settings provide the BEST data protection if a corporate smartphone is physically lost or stolen?",
+        options: [
+          "Enable full device encryption & Configure remote wipe",
+          "Disable Bluetooth & Enable airplane mode",
+          "Use a 4-digit PIN & Disable automatic updates",
+          "Install an ad-blocker & Clear browser cache"
+        ],
+        answer: 0,
+        explanation: "Full device encryption ensures data cannot be read offline, and remote wipe allows IT to erase the device remotely."
+      },
+      // Domain 3.0
+      {
+        domain: "3.0",
+        q: "A specific social media app on a user's Android phone crashes immediately upon launch, while all other apps work fine and there were no recent updates. What is the BEST first troubleshooting step?",
+        options: [
+          "Factory reset the smartphone",
+          "Clear the application's cache and data",
+          "Flash a custom ROM",
+          "Replace the battery"
+        ],
+        answer: 1,
+        explanation: "Clearing the app's cache and data is the least disruptive step to fix corrupted temporary files causing a single app to crash."
+      },
+      {
+        domain: "3.0",
+        q: "A user's smartphone became extremely slow immediately after installing a new stock market tracking app. What should you do FIRST?",
+        options: [
+          "Perform a factory reset",
+          "Uninstall the app, reboot the phone, and reinstall the app",
+          "Replace the phone with a newer model",
+          "Disable Wi-Fi"
+        ],
+        answer: 1,
+        explanation: "Always investigate what changed recently. Uninstalling the faulty app, rebooting, and reinstalling resolves corrupted app installations."
+      },
+      {
+        domain: "3.0",
+        q: "Multiple identical workstations show screen static when moving the mouse right after receiving overnight security patches and updates. What action should you take?",
+        options: [
+          "Run sfc /scannow on all machines",
+          "Rollback the video card driver",
+          "Disable Windows Defender Firewall",
+          "Replace the monitors"
+        ],
+        answer: 1,
+        explanation: "Because the issue started immediately after overnight updates, rolling back the recently updated video driver is the proper fix."
+      },
+      {
+        domain: "3.0",
+        q: "A user in the US sees Google load in Italian despite not using a VPN, and a full anti-malware scan found nothing. What should you check NEXT?",
+        options: [
+          "Verify the system date and time zone",
+          "Remove any unauthorized proxy servers configured in the browser",
+          "Reinstall the network adapter driver",
+          "Flush the ARP cache"
+        ],
+        answer: 1,
+        explanation: "Malicious or rogue browser proxy settings route traffic through a foreign server without triggering traditional malware alerts."
+      },
+      // Domain 4.0
+      {
+        domain: "4.0",
+        q: "Every new employee must sign a document outlining rules and restrictions for using company computers and internet access. Which document is this?",
+        options: ["SLA", "AUP", "SOP", "MSDS"],
+        answer: 1,
+        explanation: "An Acceptable Use Policy (AUP) defines what users can and cannot do on corporate IT systems."
+      },
+      {
+        domain: "4.0",
+        q: "Your company is setting up a point-of-sale system to accept and process customer credit cards. Which compliance standard applies?",
+        options: ["PHI", "PCI-DSS", "GDPR", "DMCA"],
+        answer: 1,
+        explanation: "The Payment Card Industry Data Security Standard (PCI-DSS) governs any organization that stores, processes, or transmits credit card data."
+      },
+      {
+        domain: "4.0",
+        q: "A server room's humidity sensor reads over 80%. What is the primary hardware risk to the servers at this humidity level?",
+        options: [
+          "Accidental electrostatic discharge (ESD)",
+          "Corrosion of internal server components",
+          "Under-voltage brownouts",
+          "Hard drive magnetic degaussing"
+        ],
+        answer: 1,
+        explanation: "High humidity (>60%) causes moisture condensation and corrosion, whereas low humidity (<40%) increases static electricity (ESD)."
+      },
+      {
+        domain: "4.0",
+        q: "You find old chemical cleaning solvents in an IT closet and need instructions on safe handling and proper disposal. Which document should you consult?",
+        options: ["MOU", "SOW", "MSDS", "AUP"],
+        answer: 2,
+        explanation: "A Material Safety Data Sheet (MSDS) details chemical hazards, safe handling, and proper environmental disposal procedures."
+      }
+    ];
+
+    const flashcards = [
+      { domain: "1.0", front: "bootrec /fixmbr vs /fixboot vs /rebuildbcd", back: "/fixmbr: Repairs Master Boot Record.\n/fixboot: Writes new boot sector.\n/rebuildbcd: Scans disks and rebuilds OS boot menu list." },
+      { domain: "1.0", front: "sfc /scannow vs DISM /RestoreHealth", back: "sfc /scannow repairs corrupted protected Windows files.\nIf SFC fails, run DISM /RestoreHealth first to fix the component store image." },
+      { domain: "1.0", front: "Public vs Private Network Profile", back: "Public: Hides PC & disables file sharing (cafes/airports).\nPrivate: Enables Network Discovery & file/printer sharing (home/office)." },
+      { domain: "1.0", front: "su vs sudo (Linux)", back: "su: Switches the entire terminal session to root.\nsudo: Elevates privileges for a SINGLE command." },
+      { domain: "2.0", front: "CompTIA 7-Step Malware Removal", back: "1. Identify symptoms\n2. Quarantine system\n3. Disable System Restore\n4. Update anti-malware\n5. Scan & remove (Safe Mode)\n6. Enable System Restore\n7. Educate user" },
+      { domain: "2.0", front: "Dictionary vs Brute-Force Attack", back: "Dictionary: Uses a pre-compiled list of common words/variations.\nBrute-force: Tries every possible character combination." },
+      { domain: "2.0", front: "Why disable WPS on SOHO routers?", back: "WPS relies on an 8-digit PIN that is easily cracked via brute-force attacks." },
+      { domain: "2.0", front: "Degaussing", back: "Uses a strong magnetic field to rapidly wipe magnetic hard drives (HDDs) in bulk." },
+      { domain: "3.0", front: "Android Single App Crashing First Step", back: "Clear the application's cache and data (least disruptive step before uninstalling)." },
+      { domain: "3.0", front: "PC Blank Screen / Driver Issue After Update", back: "Boot into Safe Mode and Rollback the driver or uninstall the recent update." },
+      { domain: "3.0", front: "Browser Redirects / Foreign Google Homepage", back: "Check and remove unauthorized Proxy Servers configured in browser settings." },
+      { domain: "4.0", front: "AUP vs SOP vs MSDS", back: "AUP: Acceptable Use Policy (user rules).\nSOP: Standard Operating Procedure (step-by-step instructions).\nMSDS: Material Safety Data Sheet (chemical disposal)." },
+      { domain: "4.0", front: "Regulated Data Types (PII, PHI, PCI-DSS)", back: "PII: Personal Identifiable Info (SSN, DOB).\nPHI: Protected Health Info (medical).\nPCI-DSS: Credit card transactions." },
+      { domain: "4.0", front: "Server Room Humidity (High vs Low)", back: "Ideal: 40–60%.\nToo High (>80%): Corrosion.\nToo Low (<40%): ESD (Static Discharge)." },
+      { domain: "4.0", front: "Screened Subnet (DMZ)", back: "Perimeter network isolating public-facing servers (FTP/Web) from the internal corporate LAN." }
+    ];
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    let filteredQuestions = [...questions];
+    let correctCount = 0;
+    let attemptedCount = 0;
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+      filteredQuestions.forEach((item, index) => {
+        const qCard = document.createElement('div');
+        qCard.className = 'quiz-card';
+        qCard.innerHTML = `
+          <div style="font-size:0.75rem; color:var(--amber); font-weight:700; margin-bottom:0.4rem;">DOMAIN ${item.domain}</div>
+          <div class="quiz-question">Q${index + 1}. ${item.q}</div>
+          <div class="quiz-options">
+            ${item.options.map((opt, optIdx) => `<button class="option-btn" onclick="checkAnswer(${index}, ${optIdx}, this)">${String.fromCharCode(65 + optIdx)}. ${opt}</button>`).join('')}
+          </div>
+          <div class="quiz-explanation" id="expl-${index}"><strong>Explanation:</strong> ${item.explanation}</div>
+        `;
+        container.appendChild(qCard);
+      });
+    }
+
+    function checkAnswer(qIdx, selectedOptIdx, btnElem) {
+      const q = filteredQuestions[qIdx];
+      const buttons = btnElem.parentElement.querySelectorAll('.option-btn');
+      const explBox = document.getElementById(`expl-${qIdx}`);
+      buttons.forEach(b => b.style.pointerEvents = 'none');
+      attemptedCount++;
+      if (selectedOptIdx === q.answer) {
+        btnElem.classList.add('correct');
+        correctCount++;
+      } else {
+        btnElem.classList.add('incorrect');
+        buttons[q.answer].classList.add('correct');
+      }
+      explBox.classList.add('show');
+      updateScoreBanner();
+    }
+
+    function updateScoreBanner() {
+      document.getElementById('correctCount').innerText = correctCount;
+      document.getElementById('totalAttempted').innerText = attemptedCount;
+      const pct = attemptedCount === 0 ? 0 : Math.round((correctCount / attemptedCount) * 100);
+      document.getElementById('scorePct').innerText = `${pct}%`;
+    }
+
+    function filterQuiz() {
+      const val = document.getElementById('quizFilter').value;
+      filteredQuestions = val === 'all' ? [...questions] : questions.filter(q => q.domain === val);
+      resetQuiz();
+    }
+
+    function resetQuiz() {
+      correctCount = 0;
+      attemptedCount = 0;
+      updateScoreBanner();
+      renderQuiz();
+    }
+
+    let filteredCards = [...flashcards];
+    let currentCardIdx = 0;
+
+    function renderCard() {
+      if (filteredCards.length === 0) return;
+      const card = filteredCards[currentCardIdx];
+      document.getElementById('cardTag').innerText = `DOMAIN ${card.domain}`;
+      document.getElementById('cardFrontText').innerText = card.front;
+      document.getElementById('cardBackTag').innerText = `DOMAIN ${card.domain} — ANSWER`;
+      document.getElementById('cardBackText').innerText = card.back;
+      document.getElementById('fcProgress').innerText = `Card ${currentCardIdx + 1} of ${filteredCards.length}`;
+      document.getElementById('card').classList.remove('flipped');
+    }
+
+    function flipCard() { document.getElementById('card').classList.toggle('flipped'); }
+    function nextCard() { if (currentCardIdx < filteredCards.length - 1) { currentCardIdx++; renderCard(); } }
+    function prevCard() { if (currentCardIdx > 0) { currentCardIdx--; renderCard(); } }
+
+    function filterFlashcards() {
+      const val = document.getElementById('fcFilter').value;
+      filteredCards = val === 'all' ? [...flashcards] : flashcards.filter(c => c.domain === val);
+      currentCardIdx = 0;
+      renderCard();
+    }
+
+    renderQuiz();
+    renderCard();
+  </script>
+</body>
+</html>
